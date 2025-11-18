@@ -60,7 +60,8 @@ export function createApp(): Application {
         message: `Cannot ${req.method} ${req.path}`,
       },
     })
-  })
+  } )
+  
 
   // Error handling middleware (must be last)
   app.use(errorMiddleware)
