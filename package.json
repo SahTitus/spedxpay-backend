@@ -1,12 +1,12 @@
 {
   "name": "spedxpay",
   "version": "1.0.0",
-  "main": "server.ts",
+  "main": "dist/server.js",
   "module": "src/server.ts",
   "type": "module",
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec tsx src/server.ts",
-    "start": "node dist/server.ts",
+    "start": "node dist/server.js",
     "build": "tsc",
     "script:cleanup-notifications": "tsx src/scripts/cleanup-notifications.ts",
     "script:cleanup-google-voice": "tsx src/scripts/cleanup-google-voice.ts",
