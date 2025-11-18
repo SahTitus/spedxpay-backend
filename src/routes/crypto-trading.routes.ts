@@ -5,7 +5,6 @@ import { authMiddleware } from "@/middlewares/auth/auth.middleware"
 import {
   sellCryptoSchema,
   buyCryptoSchema,
-  transactionActionSchema,
   transactionIdParamSchema,
 } from "@/validators/crypto-trading.validator"
 
@@ -23,13 +22,13 @@ router.post("/buy", validation.validate({ body: buyCryptoSchema }), cryptoTradin
 // User actions - CRITICAL BUTTONS
 router.post(
   "/:transactionId/i-have-sent",
-  validation.validate({ params: transactionIdParamSchema, body: transactionActionSchema }),
+  validation.validate({ params: transactionIdParamSchema }),
   cryptoTradingController.iHaveSent,
 )
 
 router.post(
   "/:transactionId/i-have-paid",
-  validation.validate({ params: transactionIdParamSchema, body: transactionActionSchema }),
+  validation.validate({ params: transactionIdParamSchema }),
   cryptoTradingController.iHavePaid,
 )
 

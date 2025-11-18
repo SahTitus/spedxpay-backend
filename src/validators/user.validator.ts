@@ -56,3 +56,10 @@ export const paymentMethodIndexSchema = Joi.object({
     "any.required": "Method index is required",
   }),
 })
+
+export const removePaymentMethodSchema = Joi.object({
+  paymentMethodId: Joi.string().required().messages({
+    "string.base": "Payment method ID must be a string",
+    "any.required": "Payment method ID is required",
+  }),
+})

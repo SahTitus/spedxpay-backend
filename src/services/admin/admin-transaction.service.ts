@@ -162,4 +162,47 @@ export class AdminTransactionService {
       throw error
     }
   }
+
+  async getAllTransactions(page = 1, limit = 20, filters: any = {}, search?: string) {
+    const skip = (page - 1) * limit
+    const [transactions, total] = await Promise.all([
+      this.transactionRepo.findAllWithFilters(skip, limit, filters, search),
+      this.transactionRepo.countWithFilters(filters, search),
+    ] )
+
+    return {
+      transactions: transactions.map((tx: any) => ({
+        transactionId: tx._id,
+        txRef: tx.txRef,
+        userId: tx.userId._id,
+        userName: tx.userId.name,
+        userEmail: tx.userId.email,
+        userPhone: tx.userId.phone,
+        type: tx.type,
+        status: tx.status,
+        cryptocurrency: tx.cryptocurrency,
+        fiatCurrency: tx.fiatCurrency,
+        amountCrypto: tx.amountCrypto,
+        amountFiat: tx.amountFiat,
+        rateUsed: tx.rateUsed,
+        walletAddress: tx.walletAddress,
+        platformWalletAddress: tx.platformWalletAddress,
+        blockchainTxHash: tx.blockchainTxHash,
+        paymentMethod: tx.paymentMethod,
+        proofOfPayment: tx.proofOfPayment,
+        proofOfSend: tx.proofOfSend,
+        reviewedBy: tx.reviewedBy ? { name: tx.reviewedBy.name, email: tx.reviewedBy.email } : null,
+        reviewedAt: tx.reviewedAt,
+        completedAt: tx.completedAt,
+        createdAt: tx.createdAt,
+        updatedAt: tx.updatedAt,
+      })),
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    }
+  }
 }

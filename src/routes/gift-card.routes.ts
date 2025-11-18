@@ -5,7 +5,6 @@ import { authMiddleware } from "@/middlewares/auth/auth.middleware"
 import {
   sellGiftCardSchema,
   buyGiftCardSchema,
-  giftCardActionSchema,
   giftCardIdParamSchema,
 } from "@/validators/gift-card.validator"
 
@@ -29,7 +28,7 @@ router.post( "/buy", validation.validate( { body: buyGiftCardSchema } ), giftCar
 // User action - "I Have Sent" button
 router.post(
   "/:giftCardId/i-have-sent",
-  validation.validate({ params: giftCardIdParamSchema, body: giftCardActionSchema }),
+  validation.validate({ params: giftCardIdParamSchema }),
   giftCardController.iHaveSentGiftCard,
 )
 
@@ -37,7 +36,7 @@ router.post(
 // User action - "I Have Paid" button
 router.post(
   "/:giftCardId/i-have-paid",
-  validation.validate({ params: giftCardIdParamSchema, body: giftCardActionSchema }),
+  validation.validate({ params: giftCardIdParamSchema }),
   giftCardController.iHavePaidForGiftCard,
 )
 

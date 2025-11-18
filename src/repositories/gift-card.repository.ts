@@ -1,5 +1,6 @@
 import { BaseRepository } from "./base/base.repository"
 import { GiftCard, type IGiftCard } from "@/models/GiftCard.model"
+import { User } from "@/models/User.model"
 
 export class GiftCardRepository extends BaseRepository<IGiftCard> {
   constructor() {
@@ -63,8 +64,9 @@ export class GiftCardRepository extends BaseRepository<IGiftCard> {
       .find({
         status: { $in: ["pending", "under_review"] },
       })
-      .populate("sellerId", "name email")
-      .populate("buyerId", "name email")
+      .populate("sellerId", "name email phone")
+      .populate("buyerId", "name email phone")
+      .populate("reviewedBy", "name email")
       .sort({ createdAt: -1 })
       .exec()
   }
@@ -80,5 +82,110 @@ export class GiftCardRepository extends BaseRepository<IGiftCard> {
         { new: true },
       )
       .exec()
+  }
+
+  async findAllWithFilters(skip = 0, limit = 20, filters: any = {}, search?: string) {
+    const query: any = {}
+
+    // Apply status filter
+    if (filters.status) {
+      query.status = filters.status
+    }
+
+    // Apply type filter (sell or buy)
+    if (filters.orderType === "sell") {
+      query.sellerId = { $exists: true }
+    } else if (filters.orderType === "buy") {
+      query.buyerId = { $exists: true }
+    }
+
+    // Apply gift card type filter
+    if (filters.type) {
+      query.type = filters.type
+    }
+
+    // Apply comprehensive search
+    if (search) {
+      const searchRegex = { $regex: search, $options: "i" }
+
+      // First, search for matching users (both sellers and buyers)
+      const matchingUsers = await User.find({
+        $or: [{ name: searchRegex }, { email: searchRegex }, { phone: searchRegex }],
+      })
+        .select("_id")
+        .lean()
+
+      const userIds = matchingUsers.map((u) => u._id)
+
+      // Build search query including user IDs and gift card fields
+      query.$or = [
+        { sellerId: { $in: userIds } },
+        { buyerId: { $in: userIds } },
+        { txRef: searchRegex },
+        { type: searchRegex },
+        { "cardDetails.pin": searchRegex },
+        { "cardDetails.serial": searchRegex },
+        { "paymentDetails.momoNumber": searchRegex },
+        { "paymentDetails.accountNumber": searchRegex },
+        { "paymentDetails.accountName": searchRegex },
+        { "paymentDetails.bankName": searchRegex },
+      ]
+    }
+
+    return this.model
+      .find(query)
+      .populate("sellerId", "name email phone")
+      .populate("buyerId", "name email phone")
+      .populate("reviewedBy", "name email")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec()
+  }
+
+  async countWithFilters(filters: any = {}, search?: string) {
+    const query: any = {}
+
+    if (filters.status) {
+      query.status = filters.status
+    }
+
+    if (filters.orderType === "sell") {
+      query.sellerId = { $exists: true }
+    } else if (filters.orderType === "buy") {
+      query.buyerId = { $exists: true }
+    }
+
+    if (filters.type) {
+      query.type = filters.type
+    }
+
+    if (search) {
+      const searchRegex = { $regex: search, $options: "i" }
+
+      // Search for matching users
+      const matchingUsers = await User.find({
+        $or: [{ name: searchRegex }, { email: searchRegex }, { phone: searchRegex }],
+      })
+        .select("_id")
+        .lean()
+
+      const userIds = matchingUsers.map((u) => u._id)
+
+      query.$or = [
+        { sellerId: { $in: userIds } },
+        { buyerId: { $in: userIds } },
+        { txRef: searchRegex },
+        { type: searchRegex },
+        { "cardDetails.pin": searchRegex },
+        { "cardDetails.serial": searchRegex },
+        { "paymentDetails.momoNumber": searchRegex },
+        { "paymentDetails.accountNumber": searchRegex },
+        { "paymentDetails.accountName": searchRegex },
+        { "paymentDetails.bankName": searchRegex },
+      ]
+    }
+
+    return this.model.countDocuments(query).exec()
   }
 }

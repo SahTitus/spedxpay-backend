@@ -148,6 +148,7 @@ export class CryptoTradingService {
         throw createError(ERROR_MESSAGES[ERROR_CODES.KYC_NOT_APPROVED], 403, ERROR_CODES.KYC_NOT_APPROVED)
       }
 
+      // TODO: UPDATE THIS
       // Get current rate (will be implemented in rates service)
       const rateUsed = 52000 // Placeholder - will fetch from rates service
 
@@ -285,9 +286,9 @@ export class CryptoTradingService {
         throw createError(ERROR_MESSAGES[ERROR_CODES.FORBIDDEN], 403, ERROR_CODES.FORBIDDEN)
       }
 
-      if (transaction.type !== TRANSACTION_TYPE.BUY_CRYPTO) {
-        throw createError("This action is only for buy crypto transactions", 400, ERROR_CODES.INVALID_INPUT)
-      }
+      // if (transaction.type !== TRANSACTION_TYPE.BUY_CRYPTO) {
+      //   throw createError("This action is only for buy crypto transactions", 400, ERROR_CODES.INVALID_INPUT)
+      // }
 
       if (transaction.status !== TRANSACTION_STATUS.PENDING) {
         throw createError(

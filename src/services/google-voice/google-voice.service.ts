@@ -54,7 +54,7 @@ export class GoogleVoiceService {
       logger.info(`Google Voice order created: ${txRef} (${data.quantity} accounts)`)
 
       return {
-        order: {
+          _id: order._id,
           id: order._id,
           txRef: order.txRef,
           quantity: order.quantity,
@@ -63,8 +63,6 @@ export class GoogleVoiceService {
           status: order.status,
           paymentMethod: order.paymentMethod,
           createdAt: order.createdAt,
-        },
-        message: `Order created for ${data.quantity} account(s). Please complete payment to proceed.`,
       }
     } catch (error) {
       logger.error("Create Google Voice order error:", error)

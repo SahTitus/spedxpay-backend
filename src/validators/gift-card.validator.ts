@@ -78,9 +78,9 @@ export const giftCardActionSchema = Joi.object({
   proofOfPayment: Joi.string().uri().optional().messages({
     "string.uri": "Proof of payment must be a valid URL",
   }),
-  proofOfSend: Joi.string().uri().optional().messages({
-    "string.uri": "Proof of send must be a valid URL",
-  }),
+  // proofOfSend: Joi.string().uri().optional().messages({
+  //   "string.uri": "Proof of send must be a valid URL",
+  // }),
 })
 
 export const giftCardIdParamSchema = Joi.object({

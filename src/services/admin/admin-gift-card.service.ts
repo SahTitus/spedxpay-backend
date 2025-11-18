@@ -234,4 +234,46 @@ export class AdminGiftCardService {
       throw error
     }
   }
+
+  async getAllGiftCards(page = 1, limit = 20, filters: any = {}, search?: string) {
+    const skip = (page - 1) * limit
+    const [giftCards, total] = await Promise.all([
+      this.giftCardRepo.findAllWithFilters(skip, limit, filters, search),
+      this.giftCardRepo.countWithFilters(filters, search),
+    ])
+
+    return {
+      giftCards: giftCards.map((gc: any) => ({
+        _id: gc._id,
+        id: gc._id,
+        giftCardId: gc._id,
+        txRef: gc.txRef,
+        sellerId: gc.sellerId ? gc.sellerId._id : null,
+        sellerName: gc.sellerId ? gc.sellerId.name : null,
+        sellerEmail: gc.sellerId ? gc.sellerId.email : null,
+        buyerId: gc.buyerId ? gc.buyerId._id : null,
+        buyerName: gc.buyerId ? gc.buyerId.name : null,
+        buyerEmail: gc.buyerId ? gc.buyerId.email : null,
+        type: gc.type,
+        status: gc.status,
+        faceValue: gc.faceValue,
+        amountToReceive: gc.amountToReceive,
+        photos: gc.photos,
+        receiptPhoto: gc.receiptPhoto,
+        cardDetails: gc.cardDetails,
+        reviewedBy: gc.reviewedBy ? { name: gc.reviewedBy.name, email: gc.reviewedBy.email } : null,
+        reviewedAt: gc.reviewedAt,
+        completedAt: gc.completedAt,
+        rejectionReason: gc.rejectionReason,
+        createdAt: gc.createdAt,
+        updatedAt: gc.updatedAt,
+      })),
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    }
+  }
 }

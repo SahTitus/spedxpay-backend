@@ -49,11 +49,11 @@ export class AdminGiftCardTypeService {
     }
   }
 
-  async getAllGiftCardTypes(activeOnly = false) {
+  async getAllGiftCardTypes( activeOnly = false ) {
     return this.giftCardTypeRepo.findAll(activeOnly)
   }
 
-  async getGiftCardType(id: string) {
+  async getGiftCardType( id: string ) {
     const giftCardType = await this.giftCardTypeRepo.findById(id)
     if (!giftCardType) {
       throw createError("Gift card type not found", 404, ERROR_CODES.NOT_FOUND)

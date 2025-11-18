@@ -95,6 +95,8 @@ export class AdminGoogleVoiceService {
           reportWindowMinutes: order.reportWindowMinutes,
         },
         metadata: {
+          _id: order._id,
+          id: order._id,
           orderId: order._id,
           txRef: order.txRef,
           quantity: order.quantity,
@@ -158,6 +160,49 @@ export class AdminGoogleVoiceService {
     } catch (error) {
       logger.error("Resolve Google Voice dispute error:", error)
       throw error
+    }
+  }
+
+  async getAllOrders(page = 1, limit = 20, filters: any = {}, search?: string) {
+    const skip = (page - 1) * limit
+    const [orders, total] = await Promise.all([
+      this.googleVoiceOrderRepo.findAllWithFilters(skip, limit, filters, search),
+      this.googleVoiceOrderRepo.countWithFilters(filters, search),
+    ] )
+    
+    return {
+      orders: orders.map((order: any) => ({
+        _id: order._id,
+        id: order._id,
+        orderId: order._id,
+        txRef: order.txRef,
+        buyerId: order.buyerId._id,
+        buyerName: order.buyerId.name,
+        buyerEmail: order.buyerId.email,
+        buyerPhone: order.buyerId.phone,
+        quantity: order.quantity,
+        priceUsd: order.priceUsd,
+        priceGhs: order.priceGhs,
+        totalAmount: order.priceGhs,
+        status: order.status,
+        paymentMethod: order.paymentMethod,
+        paymentDetails: order.paymentDetails,
+        proofOfPayment: order.proofOfPayment,
+        deliveredAt: order.deliveredAt,
+        expiresAt: order.expiresAt,
+        disputeReason: order.disputeReason,
+        reviewedBy: order.reviewedBy ? { name: order.reviewedBy.name, email: order.reviewedBy.email } : null,
+        reviewedAt: order.reviewedAt,
+        completedAt: order.completedAt,
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt,
+      })),
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
     }
   }
 }

@@ -22,8 +22,8 @@ import {
 } from "@/validators/admin.validator"
 
 const router = Router()
-const adminController = new AdminController();
-const adminRoleController = new AdminRoleController();
+const adminController = new AdminController()
+const adminRoleController = new AdminRoleController()
 
 // All admin routes require authentication and admin role
 router.use(authMiddleware)
@@ -37,6 +37,7 @@ router.post("/kyc/:kycId/review", validation.validate({ body: reviewKycSchema })
 
 // Transaction Management
 router.get("/transactions/pending", adminController.getPendingTransactions)
+router.get("/transactions/all", adminController.getAllTransactions) // Adding route to get all transactions with pagination, filtering, and search
 router.get("/transactions/:transactionId", adminController.getTransaction)
 router.post(
   "/transactions/:transactionId/confirm-payment",
@@ -58,6 +59,7 @@ router.post(
 router.get("/gift-cards/pending", adminController.getPendingGiftCards)
 router.get("/gift-cards/sell-orders/pending", adminController.getPendingSellOrders)
 router.get("/gift-cards/buy-orders/pending", adminController.getPendingBuyOrders)
+router.get("/gift-cards/all", adminController.getAllGiftCards) // Adding route to get all gift cards with pagination, filtering, and search
 router.post(
   "/gift-cards/:giftCardId/review",
   validation.validate({ body: reviewGiftCardSchema }),
@@ -92,6 +94,7 @@ router.delete("/gift-card-types/:typeId", adminController.deleteGiftCardType)
 
 // Google Voice Management
 router.get("/google-voice/pending", adminController.getPendingGoogleVoiceOrders)
+router.get("/google-voice/all", adminController.getAllGoogleVoiceOrders) // Adding route to get all Google Voice orders with pagination, filtering, and search
 router.post(
   "/google-voice/:orderId/deliver",
   validation.validate({ body: deliverGoogleVoiceSchema }),
@@ -107,7 +110,6 @@ router.post(
 router.get("/config", adminController.getPlatformConfig)
 router.put("/config", validation.validate({ body: updatePlatformConfigSchema }), adminController.updatePlatformConfig)
 
-// Role Management
 router.use("/roles", requireSuperAdmin)
 router.get("/roles/users", adminRoleController.getAllUsers)
 router.post(
@@ -118,6 +120,6 @@ router.post(
 router.post("/roles/invite", validation.validate({ body: inviteAdminSchema }), adminRoleController.inviteAdmin)
 router.get("/roles/invitations", adminRoleController.getPendingInvitations)
 router.post("/roles/invitations/:invitationId/cancel", adminRoleController.cancelInvitation)
-router.post( "/roles/invitations/:invitationId/resend", adminRoleController.resendInvitation )
+router.post("/roles/invitations/:invitationId/resend", adminRoleController.resendInvitation)
 
 export default router

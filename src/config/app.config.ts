@@ -15,7 +15,7 @@ export const appConfig = {
 
   security: {
     jwtSecret: process.env.JWT_SECRET || "your-super-secret-jwt-key",
-    jwtExpire: process.env.JWT_EXPIRE || "7d",
+    jwtExpire: process.env.JWT_EXPIRE || "1h" as string | number,
     encryptionKey:
       process.env.ENCRYPTION_KEY || "your-32-character-encryption-key",
   },

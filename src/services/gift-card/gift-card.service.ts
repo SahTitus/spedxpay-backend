@@ -1,7 +1,7 @@
 import { GiftCardRepository } from "@/repositories/gift-card.repository"
 import { UserRepository } from "@/repositories/user.repository"
-import { KycRepository } from "@/repositories/kyc.repository" // Import KYC repository
-import { GiftCardTypeRepository } from "@/repositories/gift-card-type.repository" // Added GiftCardTypeRepository import
+import { KycRepository } from "@/repositories/kyc.repository" 
+import { GiftCardTypeRepository } from "@/repositories/gift-card-type.repository"
 import { NotificationService } from "@/services/shared/notification.service"
 import { createError } from "@/middlewares/common/error.middleware"
 import { ERROR_CODES, ERROR_MESSAGES } from "@/constants/error-codes"
@@ -143,7 +143,8 @@ export class GiftCardService {
       logger.info(`Gift card sale order created: ${txRef}`)
 
       return {
-        giftCard: {
+        order: {
+          _id: giftCard._id,
           id: giftCard._id,
           txRef: giftCard.txRef,
           type: giftCard.type,
@@ -212,7 +213,10 @@ export class GiftCardService {
         throw createError(ERROR_MESSAGES[ERROR_CODES.GIFT_CARD_NOT_FOUND], 404, ERROR_CODES.GIFT_CARD_NOT_FOUND)
       }
 
-      if (giftCard.buyerId?.toString() !== userId) {
+      if (giftCard.buyerId && giftCard.buyerId?.toString() !== userId) {
+        throw createError(ERROR_MESSAGES[ERROR_CODES.FORBIDDEN], 403, ERROR_CODES.FORBIDDEN)
+      }
+      if (giftCard.sellerId && giftCard.sellerId?.toString() !== userId) {
         throw createError(ERROR_MESSAGES[ERROR_CODES.FORBIDDEN], 403, ERROR_CODES.FORBIDDEN)
       }
 

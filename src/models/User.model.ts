@@ -90,7 +90,7 @@ const UserSchema = new Schema<IUser>(
         },
         verified: {
           type: Boolean,
-          default: false,
+          default: true,
         },
         isPrimary: {
           type: Boolean,

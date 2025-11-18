@@ -2,6 +2,7 @@ import { UserRepository } from "@/repositories/user.repository"
 import { createError } from "@/middlewares/common/error.middleware"
 import { ERROR_CODES, ERROR_MESSAGES } from "@/constants/error-codes"
 import { logger } from "@/utils/logger"
+import { KycRepository } from "@/repositories/kyc.repository"
 
 export interface AddPaymentMethodDto {
   type: "momo" | "bank"
@@ -17,29 +18,62 @@ export interface AddPaymentMethodDto {
 
 export class UserService {
   private userRepo: UserRepository
+  private kycRepo: KycRepository
 
   constructor() {
     this.userRepo = new UserRepository()
+    this.kycRepo = new KycRepository()
   }
 
-  async getProfile(userId: string) {
-    const user = await this.userRepo.findById(userId)
-    if (!user) {
-      throw createError(ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND], 404, ERROR_CODES.USER_NOT_FOUND)
-    }
+async getProfile(userId: string) {
+  const user = await this.userRepo.findById(userId)
+  if (!user) {
+    throw createError(
+      ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND],
+      404,
+      ERROR_CODES.USER_NOT_FOUND
+    )
+  }
 
-    return {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-      emailVerified: user.emailVerified,
-      paymentMethods: user.paymentMethods,
-      lastLogin: user.lastLogin,
-      createdAt: user.createdAt,
+  // Get latest KYC details
+  const latestKyc = await this.kycRepo.findLatestByUserId(userId)
+
+  let kycInfo
+  if (!latestKyc) {
+    kycInfo = {
+      hasKyc: false,
+      status: null,
+      message: "No KYC submission found. Please submit your documents.",
+    }
+  } else {
+    kycInfo = {
+      hasKyc: true,
+      submissionId: latestKyc.submissionId,
+      status: latestKyc.status,
+      level: latestKyc.level,
+      submittedAt: latestKyc.submittedAt,
+      reviewedAt: latestKyc.reviewedAt,
+      rejectionReason: latestKyc.rejectionReason,
+      expiresAt: latestKyc.expiresAt,
+      version: latestKyc.version,
     }
   }
+
+  // Return merged profile
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    role: user.role,
+    kyc: kycInfo,
+    emailVerified: user.emailVerified,
+    paymentMethods: user.paymentMethods,
+    lastLogin: user.lastLogin,
+    createdAt: user.createdAt,
+  }
+}
+
 
   async updateProfile(userId: string, updates: { name?: string; phone?: string }) {
     const user = await this.userRepo.update(userId, updates as any)
@@ -75,7 +109,7 @@ export class UserService {
     await this.userRepo.addPaymentMethod(userId, {
       type: data.type,
       details: data.details,
-      verified: false,
+      verified: true,
       isPrimary: data.isPrimary || false,
     })
 
@@ -129,6 +163,28 @@ export class UserService {
 
     return {
       message: "Primary payment method updated successfully",
+    }
+  }
+
+    async removePaymentMethod(userId: string, paymentMethodId: string) {
+    const user = await this.userRepo.findById(userId)
+    if (!user) {
+      throw createError(ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND], 404, ERROR_CODES.USER_NOT_FOUND)
+    }
+
+    // Check if payment method exists
+    const paymentMethod = user.paymentMethods.find((pm: any) => pm._id.toString() === paymentMethodId)
+    if (!paymentMethod) {
+      throw createError(ERROR_MESSAGES[ERROR_CODES.PAYMENT_METHOD_NOT_FOUND], 404, ERROR_CODES.PAYMENT_METHOD_NOT_FOUND)
+    }
+
+    // Remove the payment method
+    await this.userRepo.removePaymentMethod(userId, paymentMethodId)
+
+    logger.info(`Payment method removed: ${user.email}`)
+
+    return {
+      message: "Payment method removed successfully",
     }
   }
 }

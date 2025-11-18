@@ -1,5 +1,6 @@
 export const TRANSACTION_STATUS = {
   PENDING: "pending",
+  APPROVED: "approved",
   UNDER_REVIEW: "under_review",
   PROCESSING: "processing",
   DELIVERED: "delivered",
@@ -7,6 +8,7 @@ export const TRANSACTION_STATUS = {
   REJECTED: "rejected",
   DISPUTE: "dispute",
   EXPIRED: "expired",
+  CANCELLED: "cancelled", 
   CRYPTO_RECEIVED: "crypto_received",
   PAYMENT_CONFIRMED: "payment_confirmed",
 } as const

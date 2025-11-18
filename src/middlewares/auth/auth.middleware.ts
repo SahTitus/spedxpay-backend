@@ -4,13 +4,14 @@ import { errorResponse } from "@/utils/response-formatter"
 import { ERROR_CODES, ERROR_MESSAGES } from "@/constants/error-codes"
 import { logger } from "@/utils/logger"
 
-export interface AuthRequest extends Request {
+export interface AuthRequest<P = any> extends Request<P> {
   user?: {
     userId: string
     role: string
     email: string
   }
 }
+
 
 export function authMiddleware(req: AuthRequest, res: Response, next: NextFunction): void {
   try {

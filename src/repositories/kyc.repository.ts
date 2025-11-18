@@ -1,6 +1,7 @@
 import { BaseRepository } from "./base/base.repository"
 import { Kyc, type IKyc } from "@/models/Kyc.model"
 import { KYC_STATUS } from "@/constants/statuses"
+import { User } from "@/models/User.model"
 
 export class KycRepository extends BaseRepository<IKyc> {
   constructor() {
@@ -92,5 +93,80 @@ export class KycRepository extends BaseRepository<IKyc> {
         expiresAt: { $lt: new Date() },
       })
       .exec()
+  }
+
+  async findAllWithPagination(
+    skip: number,
+    limit: number,
+    filters: { status?: string },
+    search?: string,
+  ): Promise<IKyc[]> {
+    const query: any = {}
+
+    // Apply status filter
+    if (filters.status) {
+      query.status = filters.status
+    }
+
+    // Apply comprehensive search
+    if (search) {
+      const searchRegex = { $regex: search, $options: "i" }
+
+      // First, search for matching users
+      const matchingUsers = await User.find({
+        $or: [{ name: searchRegex }, { email: searchRegex }, { phone: searchRegex }],
+      })
+        .select("_id")
+        .lean()
+
+      const userIds = matchingUsers.map((u) => u._id)
+
+      // Build search query including user IDs and KYC fields
+      query.$or = [
+        { userId: { $in: userIds } },
+        { submissionId: searchRegex },
+        { documentNumber: searchRegex },
+        { address: searchRegex },
+      ]
+    }
+
+    return this.model
+      .find(query)
+      .populate("userId", "name email phone")
+      .populate("reviewedBy", "name email")
+      .sort({ submittedAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec()
+  }
+
+  async countWithFilters(filters: { status?: string }, search?: string): Promise<number> {
+    const query: any = {}
+
+    if (filters.status) {
+      query.status = filters.status
+    }
+
+    if (search) {
+      const searchRegex = { $regex: search, $options: "i" }
+
+      // Search for matching users
+      const matchingUsers = await User.find({
+        $or: [{ name: searchRegex }, { email: searchRegex }, { phone: searchRegex }],
+      })
+        .select("_id")
+        .lean()
+
+      const userIds = matchingUsers.map((u) => u._id)
+
+      query.$or = [
+        { userId: { $in: userIds } },
+        { submissionId: searchRegex },
+        { documentNumber: searchRegex },
+        { address: searchRegex },
+      ]
+    }
+
+    return this.model.countDocuments(query).exec()
   }
 }

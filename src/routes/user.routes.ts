@@ -6,6 +6,7 @@ import {
   updateProfileSchema,
   addPaymentMethodSchema,
   paymentMethodIndexSchema,
+  removePaymentMethodSchema,
 } from "@/validators/user.validator";
 
 const router = Router();
@@ -39,5 +40,11 @@ router.post(
   validation.validate({ body: paymentMethodIndexSchema }),
   userController.setPrimaryPaymentMethod
 );
+
+router.delete(
+  "/payment-methods/:paymentMethodId",
+  validation.validate({ params: removePaymentMethodSchema }),
+  userController.removePaymentMethod,
+)
 
 export default router;

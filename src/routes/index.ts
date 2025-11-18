@@ -7,6 +7,7 @@ import giftCardRoutes from "./gift-card.routes"
 import googleVoiceRoutes from "./google-voice.routes"
 import ratesRoutes from "./rates.routes"
 import adminRoutes from "./admin.routes"
+import transactionRoutes from "./transaction.routes"
 
 const router = Router()
 
@@ -18,6 +19,7 @@ router.use("/crypto", cryptoTradingRoutes)
 router.use("/gift-cards", giftCardRoutes)
 router.use("/google-voice", googleVoiceRoutes)
 router.use("/rates", ratesRoutes)
-router.use("/admin", adminRoutes)
+router.use( "/admin", adminRoutes )
+router.use("/transactions", transactionRoutes)
 
 export default router

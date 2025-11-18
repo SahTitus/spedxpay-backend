@@ -1,4 +1,4 @@
-import Joi from "joi"
+import Joi from "joi";
 
 export const reviewKycSchema = Joi.object({
   status: Joi.string().valid("approved", "rejected").required().messages({
@@ -14,16 +14,16 @@ export const reviewKycSchema = Joi.object({
     .messages({
       "any.required": "Rejection reason is required when rejecting KYC",
     }),
-})
+});
 
 export const confirmPaymentSchema = Joi.object({
   blockchainTxHash: Joi.string().optional(),
   adminNotes: Joi.string().max(500).optional(),
-})
+});
 
 export const completeTransactionSchema = Joi.object({
   adminNotes: Joi.string().max(500).optional(),
-})
+});
 
 export const rejectTransactionSchema = Joi.object({
   reason: Joi.string().min(10).max(500).required().messages({
@@ -31,7 +31,7 @@ export const rejectTransactionSchema = Joi.object({
     "string.max": "Reason must not exceed 500 characters",
     "any.required": "Reason is required",
   }),
-})
+});
 
 export const reviewGiftCardSchema = Joi.object({
   status: Joi.string().valid("approved", "rejected").required().messages({
@@ -47,7 +47,7 @@ export const reviewGiftCardSchema = Joi.object({
     .messages({
       "any.required": "Rejection reason is required when rejecting gift card",
     }),
-})
+});
 
 export const deliverGoogleVoiceSchema = Joi.object({
   accounts: Joi.array()
@@ -67,7 +67,7 @@ export const deliverGoogleVoiceSchema = Joi.object({
         password: Joi.string().required().messages({
           "any.required": "Password is required",
         }),
-      }),
+      })
     )
     .min(1)
     .max(10)
@@ -77,7 +77,7 @@ export const deliverGoogleVoiceSchema = Joi.object({
       "array.max": "Cannot deliver more than 10 accounts at once",
       "any.required": "Accounts array is required",
     }),
-})
+});
 
 export const resolveDisputeSchema = Joi.object({
   resolution: Joi.string().min(10).max(500).required().messages({
@@ -85,7 +85,7 @@ export const resolveDisputeSchema = Joi.object({
     "string.max": "Resolution must not exceed 500 characters",
     "any.required": "Resolution is required",
   }),
-})
+});
 
 export const updatePlatformConfigSchema = Joi.object({
   wallets: Joi.object({
@@ -102,7 +102,7 @@ export const updatePlatformConfigSchema = Joi.object({
     bankAccountNumber: Joi.string().optional(),
     bankAccountName: Joi.string().optional(),
   }).optional(),
-})
+});
 
 export const createGiftCardTypeSchema = Joi.object({
   name: Joi.string().min(2).max(50).required().messages({
@@ -118,7 +118,8 @@ export const createGiftCardTypeSchema = Joi.object({
     .messages({
       "string.min": "Code must be at least 2 characters",
       "string.max": "Code must not exceed 20 characters",
-      "string.pattern.base": "Code must contain only lowercase letters, numbers, and hyphens",
+      "string.pattern.base":
+        "Code must contain only lowercase letters, numbers, and hyphens",
       "any.required": "Code is required",
     }),
   description: Joi.string().max(200).optional().messages({
@@ -127,7 +128,7 @@ export const createGiftCardTypeSchema = Joi.object({
   icon: Joi.string().uri().optional().messages({
     "string.uri": "Icon must be a valid URL",
   }),
-})
+});
 
 export const updateGiftCardTypeSchema = Joi.object({
   name: Joi.string().min(2).max(50).optional().messages({
@@ -141,7 +142,7 @@ export const updateGiftCardTypeSchema = Joi.object({
   icon: Joi.string().uri().optional().messages({
     "string.uri": "Icon must be a valid URL",
   }),
-})
+});
 
 export const deliverGiftCardSchema = Joi.object({
   cardDetails: Joi.object({
@@ -157,7 +158,7 @@ export const deliverGiftCardSchema = Joi.object({
   notes: Joi.string().max(500).optional().messages({
     "string.max": "Notes must not exceed 500 characters",
   }),
-})
+});
 
 export const cancelBuyOrderSchema = Joi.object({
   reason: Joi.string().min(10).max(500).required().messages({
@@ -165,15 +166,17 @@ export const cancelBuyOrderSchema = Joi.object({
     "string.max": "Reason must not exceed 500 characters",
     "any.required": "Reason is required",
   }),
-} )
-
+});
 
 export const assignRoleSchema = Joi.object({
-  role: Joi.string().valid("user", "admin", "assistant_admin").required().messages({
-    "any.only": "Role must be one of: user, admin, assistant_admin",
-    "any.required": "Role is required",
-  }),
-})
+  role: Joi.string()
+    .valid("user", "admin", "assistant_admin")
+    .required()
+    .messages({
+      "any.only": "Role must be one of: user, admin, assistant_admin",
+      "any.required": "Role is required",
+    }),
+});
 
 export const inviteAdminSchema = Joi.object({
   email: Joi.string().email().required().messages({
@@ -184,4 +187,4 @@ export const inviteAdminSchema = Joi.object({
     "any.only": "Role must be either admin or assistant_admin",
     "any.required": "Role is required",
   }),
-})
+});

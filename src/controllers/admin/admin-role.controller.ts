@@ -34,6 +34,7 @@ export class AdminRoleController {
   })
 
   getAllUsers = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const search = req.query.search as string
     const page = Number.parseInt(req.query.page as string) || 1
     const limit = Number.parseInt(req.query.limit as string) || 20
     const roleFilterParam = req.query.role as string | undefined
@@ -51,7 +52,7 @@ export class AdminRoleController {
       roleFilter = roleFilterParam as UserRole
     }
 
-    const users = await this.adminRoleService.getAllUsers(page, limit, roleFilter)
+    const users = await this.adminRoleService.getAllUsers(page, limit, roleFilter, search)
 
     res.status(200).json(successResponse("Users retrieved successfully", users))
   })

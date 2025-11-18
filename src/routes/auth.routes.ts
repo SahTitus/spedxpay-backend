@@ -8,6 +8,7 @@ import {
   verifyEmailSchema,
   requestPasswordResetSchema,
   resetPasswordSchema,
+  changePasswordSchema,
 } from "@/validators/auth.validator";
 
 const router = Router();
@@ -43,6 +44,15 @@ router.post(
   validation.validate({ body: resetPasswordSchema }),
   authController.resetPassword
 );
+
+
+router.post(
+  "/change-password",
+  authMiddleware,
+  validation.validate({ body: changePasswordSchema }),
+  authController.changePassword,
+)
+
 
 router.get("/me", authMiddleware, authController.getMe);
 

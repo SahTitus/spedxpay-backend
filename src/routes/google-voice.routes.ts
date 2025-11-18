@@ -5,7 +5,6 @@ import { authMiddleware } from "@/middlewares/auth/auth.middleware"
 import {
   createGoogleVoiceOrderSchema,
   reportIssueSchema,
-  googleVoiceActionSchema,
   orderIdParamSchema,
 } from "@/validators/google-voice.validator"
 
@@ -21,7 +20,7 @@ router.post("/orders", validation.validate({ body: createGoogleVoiceOrderSchema 
 // User action - "I Have Paid" button
 router.post(
   "/orders/:orderId/i-have-paid",
-  validation.validate({ params: orderIdParamSchema, body: googleVoiceActionSchema }),
+  validation.validate({ params: orderIdParamSchema }),
   googleVoiceController.iHavePaid,
 )
 

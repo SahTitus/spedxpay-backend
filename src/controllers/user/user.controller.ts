@@ -41,5 +41,12 @@ export class UserController {
     const { methodIndex } = req.body
     const result = await this.userService.setPrimaryPaymentMethod(userId, methodIndex)
     res.status(200).json(successResponse("Primary payment method updated successfully", result))
+  } )
+  
+    removePaymentMethod = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+    const userId = req.user!.userId
+    const { paymentMethodId } = req.params
+    const result = await this.userService.removePaymentMethod(userId, paymentMethodId)
+    res.status(200).json(successResponse("Payment method removed successfully", result))
   })
 }

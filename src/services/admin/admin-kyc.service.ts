@@ -66,8 +66,7 @@ export class AdminKycService {
 
   async reviewKyc(adminId: string, submissionId: string, data: ReviewKycDto) {
     try {
-      const kyc = await this.kycRepo.findBySubmissionId( submissionId )
-
+      const kyc = await this.kycRepo.findBySubmissionId(submissionId)
       if (!kyc) {
         throw createError("KYC submission not found", 404, ERROR_CODES.KYC_NOT_FOUND)
       }
@@ -160,17 +159,20 @@ export class AdminKycService {
     }))
   }
 
-  async getAllSubmissions(page = 1, limit = 20) {
+  async getAllSubmissions(page = 1, limit = 20, filters: { status?: string } = {}, search?: string) {
     const skip = (page - 1) * limit
-    const [submissions, total] = await Promise.all([this.kycRepo.findAll(skip, limit), this.kycRepo.count()])
+    const [submissions, total] = await Promise.all([
+      this.kycRepo.findAllWithPagination(skip, limit, filters, search),
+      this.kycRepo.countWithFilters(filters, search),
+    ])
 
-    console.log("==========",submissions)
     return {
       submissions: submissions.map((kyc: any) => ({
         submissionId: kyc.submissionId,
-        userId: kyc.userId?._id,
+        userId: kyc.userId._id,
         userName: kyc.userId.name,
         userEmail: kyc.userId.email,
+        documents: kyc.documents,
         level: kyc.level,
         status: kyc.status,
         submittedAt: kyc.submittedAt,

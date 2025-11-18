@@ -35,7 +35,11 @@ export class AdminController {
   getAllKycSubmissions = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
     const page = Number.parseInt(req.query.page as string) || 1
     const limit = Number.parseInt(req.query.limit as string) || 20
-    const result = await this.adminKycService.getAllSubmissions(page, limit)
+    const filters = {
+      status: req.query.status as string,
+    }
+    const search = req.query.search as string
+    const result = await this.adminKycService.getAllSubmissions(page, limit, filters, search)
     res.status(200).json(successResponse("All KYC submissions retrieved", result))
   })
 
@@ -56,6 +60,19 @@ export class AdminController {
   getPendingTransactions = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
     const transactions = await this.adminTransactionService.getPendingTransactions()
     res.status(200).json(successResponse("Pending transactions retrieved", transactions))
+  })
+
+  getAllTransactions = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+    const page = Number.parseInt(req.query.page as string) || 1
+    const limit = Number.parseInt(req.query.limit as string) || 20
+    const filters = {
+      status: req.query.status as string,
+      type: req.query.type as string,
+      cryptocurrency: req.query.cryptocurrency as string,
+    }
+    const search = req.query.search as string
+    const result = await this.adminTransactionService.getAllTransactions(page, limit, filters, search)
+    res.status(200).json(successResponse("All transactions retrieved", result))
   })
 
   getTransaction = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -89,9 +106,9 @@ export class AdminController {
   getPendingGiftCards = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
     const giftCards = await this.adminGiftCardService.getPendingGiftCards()
     res.status(200).json(successResponse("Pending gift cards retrieved", giftCards))
-  } )
-  
-   getPendingSellOrders = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+  })
+
+  getPendingSellOrders = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
     const sellOrders = await this.adminGiftCardService.getPendingSellOrders()
     res.status(200).json(successResponse("Pending sell orders retrieved", sellOrders))
   })
@@ -99,6 +116,19 @@ export class AdminController {
   getPendingBuyOrders = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
     const buyOrders = await this.adminGiftCardService.getPendingBuyOrders()
     res.status(200).json(successResponse("Pending buy orders retrieved", buyOrders))
+  })
+
+  getAllGiftCards = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+    const page = Number.parseInt(req.query.page as string) || 1
+    const limit = Number.parseInt(req.query.limit as string) || 20
+    const filters = {
+      status: req.query.status as string,
+      orderType: req.query.orderType as string,
+      type: req.query.type as string,
+    }
+    const search = req.query.search as string
+    const result = await this.adminGiftCardService.getAllGiftCards(page, limit, filters, search)
+    res.status(200).json(successResponse("All gift cards retrieved", result))
   })
 
   reviewGiftCard = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -113,9 +143,9 @@ export class AdminController {
     const { giftCardId } = req.params
     const result = await this.adminGiftCardService.completeGiftCardSale(adminId, giftCardId)
     res.status(200).json(successResponse("Gift card sale completed", result))
-  } )
-  
-    deliverGiftCardToBuyer = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+  })
+
+  deliverGiftCardToBuyer = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
     const adminId = req.user!.userId
     const { giftCardId } = req.params
     const result = await this.adminGiftCardService.deliverGiftCardToBuyer(adminId, giftCardId, req.body)
@@ -134,6 +164,17 @@ export class AdminController {
   getPendingGoogleVoiceOrders = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
     const orders = await this.adminGoogleVoiceService.getPendingOrders()
     res.status(200).json(successResponse("Pending Google Voice orders retrieved", orders))
+  })
+
+  getAllGoogleVoiceOrders = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+    const page = Number.parseInt(req.query.page as string) || 1
+    const limit = Number.parseInt(req.query.limit as string) || 20
+    const filters = {
+      status: req.query.status as string,
+    }
+    const search = req.query.search as string
+    const result = await this.adminGoogleVoiceService.getAllOrders(page, limit, filters, search)
+    res.status(200).json(successResponse("All Google Voice orders retrieved", result))
   })
 
   deliverGoogleVoiceOrder = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {

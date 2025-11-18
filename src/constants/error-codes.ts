@@ -51,6 +51,7 @@ export const ERROR_CODES = {
   DISPUTE_WINDOW_EXPIRED: "dispute_window_expired",
 
   // General
+  INVALID_REQUEST: "invalid_request",
   INTERNAL_SERVER_ERROR: "internal_server_error",
   INTERNAL_ERROR: "internal_server_error",
   NOT_FOUND: "not_found",
@@ -58,6 +59,7 @@ export const ERROR_CODES = {
 } as const
 
 export const ERROR_MESSAGES: Record<string, string> = {
+  [ERROR_CODES.INVALID_REQUEST]: "Invalid request",
   [ERROR_CODES.INVALID_CREDENTIALS]: "Invalid email or password",
   [ERROR_CODES.USER_NOT_FOUND]: "User not found",
   [ERROR_CODES.USER_ALREADY_EXISTS]: "User already exists with this email",

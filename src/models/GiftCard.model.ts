@@ -81,7 +81,7 @@ const GiftCardSchema = new Schema<IGiftCard>(
     receiptPhoto: String,
     status: {
       type: String,
-      enum: ["pending", "under_review", "approved", "completed", "rejected"],
+      enum: ["pending", "under_review", "approved", "completed", "rejected", "cancelled"],
       default: "pending",
       index: true,
     },

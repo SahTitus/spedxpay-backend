@@ -1,4 +1,4 @@
-import mongoose, { Schema, type Document } from "mongoose"
+import mongoose, { DateExpressionOperator, Schema, type Document } from "mongoose"
 import { decrypt } from "@/utils/encryption"
 
 export interface IAccountDetails {
@@ -27,7 +27,7 @@ export interface IGoogleVoiceOrder extends Document {
   completedAt?: Date
   metadata?: Record<string, any>
   createdAt: Date
-  updatedAt: Date
+  updatedAt: DateExpressionOperator
   getDecryptedPasswords(): Array<{ accountEmail: string; password: string }>
 }
 
@@ -83,7 +83,7 @@ const GoogleVoiceOrderSchema = new Schema<IGoogleVoiceOrder>(
     },
     status: {
       type: String,
-      enum: ["pending", "under_review", "delivered", "completed", "dispute", "rejected"],
+      enum: ["pending", "under_review", "delivered", "completed", "dispute", "rejected", "cancelled"],
       default: "pending",
       index: true,
     },

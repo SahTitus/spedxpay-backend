@@ -45,5 +45,15 @@ export class AuthController {
         user: req.user,
       }),
     )
+  } )
+  
+    changePassword = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+    const userId = req.user?.userId
+    if (!userId) {
+      throw new Error("User not authenticated")
+    }
+    const { currentPassword, newPassword } = req.body
+    const result = await this.authService.changePassword(userId, currentPassword, newPassword)
+    res.status(200).json(successResponse("Password changed successfully", result))
   })
 }

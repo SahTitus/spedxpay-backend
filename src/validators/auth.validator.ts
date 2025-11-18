@@ -56,4 +56,19 @@ export const resetPasswordSchema = Joi.object({
     "string.max": "Password must not exceed 100 characters",
     "any.required": "Password is required",
   }),
+} )
+
+export const changePasswordSchema = Joi.object({
+  currentPassword: Joi.string().required().messages({
+    "any.required": "Current password is required",
+  }),
+  newPassword: Joi.string().min(6).max(100).required().messages({
+    "string.min": "New password must be at least 6 characters",
+    "string.max": "New password must not exceed 100 characters",
+    "any.required": "New password is required",
+  }),
+  confirmPassword: Joi.string().valid(Joi.ref("newPassword")).required().messages({
+    "any.only": "Passwords do not match",
+    "any.required": "Password confirmation is required",
+  }),
 })

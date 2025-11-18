@@ -20,8 +20,7 @@ export class AdminRoleService {
 
   async assignRole(superAdminId: string, userId: string, newRole: UserRole) {
     // Validate role
-    const allowedRoles = [ USER_ROLE.USER, USER_ROLE.ADMIN, USER_ROLE.ASSISTANT_ADMIN ] as UserRole[]
-    
+    const allowedRoles = [USER_ROLE.USER, USER_ROLE.ADMIN, USER_ROLE.ASSISTANT_ADMIN] as UserRole[]
     if (!allowedRoles.includes(newRole)) {
       throw createError(ERROR_MESSAGES[ERROR_CODES.INVALID_INPUT], 400, ERROR_CODES.INVALID_INPUT)
     }
@@ -132,19 +131,17 @@ export class AdminRoleService {
     return invitation
   }
 
-  async getAllUsers(page = 1, limit = 20, roleFilter?: UserRole) {
-    const query: any = {}
+  async getAllUsers(page = 1, limit = 20, roleFilter?: UserRole, search?: string) {
+    const skip = (page - 1) * limit
+    const filters: any = {}
     if (roleFilter) {
-      query.role = roleFilter
+      filters.role = roleFilter
     }
 
-    const users = await this.userRepository.find(query, {
-      page,
-      limit,
-      sortBy: "createdAt",
-      sortOrder: "desc",
-    })
-    const total = await this.userRepository.count(query)
+    const [users, total] = await Promise.all([
+      this.userRepository.findAllWithPagination(skip, limit, filters, search),
+      this.userRepository.countWithFilters(filters, search),
+    ])
 
     return {
       users,

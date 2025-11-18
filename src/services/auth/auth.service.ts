@@ -270,4 +270,57 @@ export class AuthService {
       throw error
     }
   }
+
+    async changePassword(userId: string, currentPassword: string, newPassword: string) {
+      try {
+      // Find user with password field
+        const user = await this.userRepo.findById( userId, "+password" )
+        
+      if (!user) {
+        throw createError(ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND], 404, ERROR_CODES.USER_NOT_FOUND)
+      }
+
+      // Verify current password
+      const isPasswordValid = await user.comparePassword(currentPassword)
+      if (!isPasswordValid) {
+        throw createError("Current password is incorrect", 401, ERROR_CODES.INVALID_CREDENTIALS)
+      }
+
+      // Update password
+      user.password = newPassword
+      await user.save()
+
+      const timestamp = new Date().toLocaleString("en-US", {
+        dateStyle: "full",
+        timeStyle: "long",
+      })
+
+      await this.notificationService.send({
+        userId,
+        type: "general",
+        title: "Password Changed Successfully",
+        message: `Your password was successfully changed on ${timestamp}. If you didn't make this change, please contact support immediately.`,
+        channels: ["email"],
+        userEmail: user.email,
+        userName: user.name,
+        templateType: "password-changed",
+        templateData: {
+          timestamp,
+          supportEmail: process.env.ADMIN_EMAIL || "support@spedxpay.com",
+        },
+        metadata: {
+          changedAt: new Date().toISOString(),
+        },
+      })
+
+      logger.info(`Password changed: ${user.email}`)
+
+      return {
+        message: "Password changed successfully",
+      }
+    } catch (error) {
+      logger.error("Change password error:", error)
+      throw error
+    }
+  }
 }
