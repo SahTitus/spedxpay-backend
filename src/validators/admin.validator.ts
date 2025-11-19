@@ -1,5 +1,6 @@
 import Joi from "joi";
 
+
 export const reviewKycSchema = Joi.object({
   status: Joi.string().valid("approved", "rejected").required().messages({
     "any.only": "Status must be either 'approved' or 'rejected'",
