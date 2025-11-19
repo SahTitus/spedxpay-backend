@@ -236,7 +236,7 @@ export class GoogleVoiceService {
       const expiredOrders = await this.googleVoiceOrderRepo.findExpiredDisputeWindows()
 
       for (const order of expiredOrders) {
-        await this.googleVoiceOrderRepo.updateStatus((order._id as string).toString(), "completed", {
+        await this.googleVoiceOrderRepo.updateStatus(order._id.toString(), "completed", {
           completedAt: new Date(),
         })
 
