@@ -1,7 +1,7 @@
 import type { Response, NextFunction } from "express"
 import { asyncHandler } from "@/middlewares/common/error.middleware"
 import { TransactionService } from "@/services/transaction/transaction.service"
-import { AuthRequest } from "@/middlewares/auth/auth.middleware"
+import type { AuthRequest } from "@/middlewares/auth/auth.middleware"
 
 export class TransactionController {
   private transactionService: TransactionService

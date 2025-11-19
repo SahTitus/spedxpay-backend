@@ -20,7 +20,7 @@
     },
     // Additional options for better Node.js compatibility
     "allowImportingTsExtensions": false,
-    "verbatimModuleSyntax": false
+    "verbatimModuleSyntax": true
   },
   "ts-node": {
     "esm": true,
