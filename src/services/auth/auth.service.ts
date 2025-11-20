@@ -49,7 +49,7 @@ export class AuthService {
         emailVerificationExpires,
       } as any)
 
-      const userId = user._id.toString()
+      const userId = (user._id as string).toString();
 
       await this.notificationService.send({
         userId,
@@ -106,7 +106,7 @@ export class AuthService {
         throw createError(ERROR_MESSAGES[ERROR_CODES.INVALID_CREDENTIALS], 401, ERROR_CODES.INVALID_CREDENTIALS)
       }
 
-      const userId = user._id.toString()
+      const userId = (user._id as string).toString();
 
       // Update last login
       await this.userRepo.update( userId, { lastLogin: new Date() } as any );
@@ -156,7 +156,7 @@ export class AuthService {
       }
 
       // Update user
-      await this.userRepo.update(user._id.toString(), {
+      await this.userRepo.update((user._id as string).toString(), {
         emailVerified: true,
         emailVerificationToken: undefined,
         emailVerificationExpires: undefined,
@@ -187,7 +187,7 @@ export class AuthService {
       const resetToken = crypto.randomBytes(32).toString("hex")
       const resetExpires = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 
-      const userId = user._id.toString()
+      const userId = (user._id as string).toString();
 
       await this.userRepo.update(userId, {
         resetPasswordToken: resetToken,
@@ -229,7 +229,7 @@ export class AuthService {
         throw createError("Invalid or expired reset token", 400, ERROR_CODES.INVALID_TOKEN)
       }
 
-      const userId = user._id.toString();
+      const userId = (user._id as string).toString();;
 
       // Update password
       user.password = newPassword
