@@ -7,12 +7,15 @@ await esbuild.build({
   target: "node20",
   outfile: "dist/index.js",
   format: "esm",
-  sourcemap: true,
+  sourcemap: false,
+  minify: false,
   packages: "external",
   banner: {
     js: 'import { createRequire } from "module"; const require = createRequire(import.meta.url);',
   },
-  alias: { "@": "./src" },
+  alias: {
+    "@": "./src",
+  },
 });
 
-console.log("Build complete → dist/index.js");
+console.log("Build successful: dist/index.js created");
