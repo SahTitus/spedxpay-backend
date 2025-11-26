@@ -256,7 +256,7 @@ export class CryptoTradingService {
           reviewLink: `${process.env.FRONTEND_URL}/admin/transactions/${transaction._id}`,
         },
         metadata: {
-          transactionId: (transaction._id as string).toString(),
+          transactionId: String(transaction._id),
           txRef: transaction.txRef,
           cryptocurrency: transaction.cryptocurrency,
           amount: transaction.amountCrypto,
@@ -327,7 +327,7 @@ export class CryptoTradingService {
           reviewLink: `${process.env.FRONTEND_URL}/admin/transactions/${transaction._id}`,
         },
         metadata: {
-          transactionId: (transaction._id as string).toString(),
+          transactionId: String(transaction._id),
           txRef: transaction.txRef,
           cryptocurrency: transaction.cryptocurrency,
           amount: transaction.amountFiat,
