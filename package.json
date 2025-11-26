@@ -2,13 +2,12 @@
   "name": "spedxpay",
   "version": "1.0.0",
   "main": "dist/index.js",
-  "module": "src/server.ts",
   "type": "module",
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec tsx src/server.ts",
-    "start": "node dist/index.js",
     "build": "node build.mjs",
     "vercel-build": "npm run build",
+    "start": "node dist/index.js",
     "script:cleanup-notifications": "tsx src/scripts/cleanup-notifications.ts",
     "script:cleanup-google-voice": "tsx src/scripts/cleanup-google-voice.ts",
     "script:update-rates": "tsx src/scripts/update-rates.ts"

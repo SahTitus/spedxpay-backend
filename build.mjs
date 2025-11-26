@@ -1,24 +1,18 @@
-import esbuild from 'esbuild'
+import esbuild from "esbuild";
 
 await esbuild.build({
-  entryPoints: ['src/server.ts'],     // ← your entry point
+  entryPoints: ["src/server.ts"],
   bundle: true,
-  platform: 'node',
-  target: 'node20',                   // Node 23.6.0 works with node20
-  outfile: 'dist/index.js',
-  format: 'esm',
+  platform: "node",
+  target: "node20",
+  outfile: "dist/index.js",
+  format: "esm",
   sourcemap: true,
-  minify: process.env.NODE_ENV === 'production',
-  packages: 'external',
-  banner: {                           // ← Fixed: added quotes around 'js'
+  packages: "external",
+  banner: {
     js: 'import { createRequire } from "module"; const require = createRequire(import.meta.url);',
   },
-  alias: {
-    '@': './src',                     // ← fixes all @/ imports
-  },
-  loader: {
-    '.ts': 'ts',
-  },
-})
+  alias: { "@": "./src" },
+});
 
-console.log('Build complete → dist/index.js')
+console.log("Build complete → dist/index.js");
