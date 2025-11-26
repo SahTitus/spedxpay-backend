@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec tsx src/server.ts",
     "start": "node dist/server.js",
-    "build": "tsc",
+    "build": "node build.mjs",
     "script:cleanup-notifications": "tsx src/scripts/cleanup-notifications.ts",
     "script:cleanup-google-voice": "tsx src/scripts/cleanup-google-voice.ts",
     "script:update-rates": "tsx src/scripts/update-rates.ts"
@@ -43,6 +43,7 @@
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.2",
+    "esbuild": "^0.27.0",
     "eslint": "^9.37.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
