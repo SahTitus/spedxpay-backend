@@ -1,9 +1,11 @@
-src/
-build.mjs
-tsconfig.json
-*.ts
+# .vercelignore
+# Keep build.mjs so Vercel can run the build step
+!build.mjs
+
+# Default ignores (keep everything else normal)
+node_modules/
+dist/
 .env*
 .git
 .gitignore
-node_modules/
-!node_modules/**
+README.md
