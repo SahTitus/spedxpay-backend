@@ -1,0 +1,9 @@
+src/
+build.mjs
+tsconfig.json
+*.ts
+.env*
+.git
+.gitignore
+node_modules/
+!node_modules/**
