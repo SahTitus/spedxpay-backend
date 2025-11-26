@@ -4,46 +4,39 @@ import { appConfig } from "@/config/app.config"
 import { logger } from "@/utils/logger"
 import { schedulerService } from "./services/scheduler/scheduler.service"
 
-async function startServer() {
-  try {
-    // Connect to database
-    await connectDatabase()
+// Create Express application instance
+const app = createApp()
 
-    // Create Express app
-    const app = createApp()
-
-    schedulerService.initialize()
-    logger.info("✓ Scheduler service initialized - all cron jobs are running")
-
-    // Start server
-    const server = app.listen(appConfig.port, () => {
-      logger.info(`Server running on port ${appConfig.port}`)
-      logger.info(`Environment: ${appConfig.env}`)
-      logger.info(`API Version: ${appConfig.apiVersion}`)
-    })
-
-    // Graceful shutdown
-    process.on("SIGTERM", () => {
-      logger.info( "SIGTERM signal received: closing HTTP server" )
-      schedulerService.stopAll()
-      server.close(() => {
-        logger.info("HTTP server closed")
-        process.exit(0)
-      })
-    })
-
-    process.on("SIGINT", () => {
-      logger.info( "SIGINT signal received: closing HTTP server" )
-      schedulerService.stopAll()
-      server.close(() => {
-        logger.info("HTTP server closed")
-        process.exit(0)
-      })
-    })
-  } catch (error) {
-    logger.error("Failed to start server:", error)
-    process.exit(1)
-  }
+// Initialize database connection and background jobs
+async function bootstrap() {
+  await connectDatabase()
+  schedulerService.initialize()
+  logger.info("Scheduler service initialized")
 }
 
-startServer()
+bootstrap().catch((err) => {
+  logger.error("Application bootstrap failed", err)
+  process.exit(1)
+})
+
+// Start HTTP server only in local or non-Vercel environments
+if (!process.env.VERCEL) {
+  const server = app.listen(appConfig.port, () => {
+    logger.info(`Server running on http://localhost:${appConfig.port}`)
+    logger.info(`Environment: ${appConfig.env}`)
+    logger.info(`API Version: ${appConfig.apiVersion}`)
+  })
+
+  // Graceful shutdown handler
+  const shutdown = () => {
+    logger.info("Shutting down gracefully...")
+    schedulerService.stopAll()
+    server.close(() => process.exit(0))
+  }
+
+  process.on("SIGTERM", shutdown)
+  process.on("SIGINT", shutdown)
+}
+
+// Export raw Express app for Vercel serverless functions
+export default app
