@@ -1,40 +1,40 @@
-import mongoose, { Schema, type Document } from "mongoose"
-import { TRANSACTION_STATUS, TRANSACTION_TYPE } from "../constants/statuses"
-import { CRYPTO_CURRENCIES, FIAT_CURRENCIES } from "../constants/currencies"
+import mongoose, { Schema, type Document } from "mongoose";
+import { TRANSACTION_STATUS, TRANSACTION_TYPE } from "../constants/statuses.js";
+import { CRYPTO_CURRENCIES, FIAT_CURRENCIES } from "../constants/currencies.js";
 
 export interface ITransaction extends Document {
-  userId: mongoose.Types.ObjectId
-  type: string
-  status: string
-  cryptocurrency?: string
-  fiatCurrency: string
-  amountCrypto?: number
-  amountFiat: number
-  rateUsed?: number
-  walletAddress?: string
-  platformWalletAddress?: string
-  blockchainTxHash?: string
-  paymentMethod: string
+  userId: mongoose.Types.ObjectId;
+  type: string;
+  status: string;
+  cryptocurrency?: string;
+  fiatCurrency: string;
+  amountCrypto?: number;
+  amountFiat: number;
+  rateUsed?: number;
+  walletAddress?: string;
+  platformWalletAddress?: string;
+  blockchainTxHash?: string;
+  paymentMethod: string;
   paymentDetails?: {
-    momoNumber?: string
-    momoProvider?: string
-    bankName?: string
-    accountNumber?: string
-    accountName?: string
-  }
-  adapter: string
-  txRef: string
-  proofOfPayment?: string
-  proofOfSend?: string
-  termsAccepted: boolean
-  adminNotes?: string
-  reviewedBy?: mongoose.Types.ObjectId
-  reviewedAt?: Date
-  completedAt?: Date
-  expiresAt?: Date
-  metadata?: Record<string, any>
-  createdAt: Date
-  updatedAt: Date
+    momoNumber?: string;
+    momoProvider?: string;
+    bankName?: string;
+    accountNumber?: string;
+    accountName?: string;
+  };
+  adapter: string;
+  txRef: string;
+  proofOfPayment?: string;
+  proofOfSend?: string;
+  termsAccepted: boolean;
+  adminNotes?: string;
+  reviewedBy?: mongoose.Types.ObjectId;
+  reviewedAt?: Date;
+  completedAt?: Date;
+  expiresAt?: Date;
+  metadata?: Record<string, any>;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const TransactionSchema = new Schema<ITransaction>(
@@ -141,12 +141,15 @@ const TransactionSchema = new Schema<ITransaction>(
   },
   {
     timestamps: true,
-  },
-)
+  }
+);
 
 // Indexes for efficient queries
-TransactionSchema.index({ userId: 1, status: 1 })
-TransactionSchema.index({ type: 1, status: 1 })
-TransactionSchema.index({ createdAt: -1 })
+TransactionSchema.index({ userId: 1, status: 1 });
+TransactionSchema.index({ type: 1, status: 1 });
+TransactionSchema.index({ createdAt: -1 });
 
-export const Transaction = mongoose.model<ITransaction>("Transaction", TransactionSchema)
+export const Transaction = mongoose.model<ITransaction>(
+  "Transaction",
+  TransactionSchema
+);

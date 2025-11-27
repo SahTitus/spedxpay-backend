@@ -1,56 +1,64 @@
-import { GoogleVoiceOrderRepository } from "../../repositories/google-voice-order.repository"
-import { UserRepository } from "../../repositories/user.repository"
-import { NotificationService } from "../../services/shared/notification.service"
-import { createError } from "../../middlewares/common/error.middleware"
-import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
-import { encrypt } from "../../utils/encryption"
-import { logger } from "../../utils/logger"
+import { GoogleVoiceOrderRepository } from "../../repositories/google-voice-order.repository.js";
+import { UserRepository } from "../../repositories/user.repository.js";
+import { NotificationService } from "../../services/shared/notification.service.js";
+import { createError } from "../../middlewares/common/error.middleware.js";
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes.js";
+import { encrypt } from "../../utils/encryption.js";
+import { logger } from "../../utils/logger.js";
 
 export interface DeliverGoogleVoiceDto {
   accounts: Array<{
-    accountEmail: string
-    phoneNumber: string
-    recoveryEmail: string
-    password: string
-  }>
+    accountEmail: string;
+    phoneNumber: string;
+    recoveryEmail: string;
+    password: string;
+  }>;
 }
 
 export class AdminGoogleVoiceService {
-  private googleVoiceOrderRepo: GoogleVoiceOrderRepository
-  private userRepo: UserRepository
-  private notificationService: NotificationService
+  private googleVoiceOrderRepo: GoogleVoiceOrderRepository;
+  private userRepo: UserRepository;
+  private notificationService: NotificationService;
 
   constructor() {
-    this.googleVoiceOrderRepo = new GoogleVoiceOrderRepository()
-    this.userRepo = new UserRepository()
-    this.notificationService = new NotificationService()
+    this.googleVoiceOrderRepo = new GoogleVoiceOrderRepository();
+    this.userRepo = new UserRepository();
+    this.notificationService = new NotificationService();
   }
 
   async getPendingOrders() {
-    return this.googleVoiceOrderRepo.findPendingOrders()
+    return this.googleVoiceOrderRepo.findPendingOrders();
   }
 
-  async deliverOrder(adminId: string, orderId: string, data: DeliverGoogleVoiceDto) {
+  async deliverOrder(
+    adminId: string,
+    orderId: string,
+    data: DeliverGoogleVoiceDto
+  ) {
     try {
-      const order = await this.googleVoiceOrderRepo.findById(orderId)
+      const order = await this.googleVoiceOrderRepo.findById(orderId);
       if (!order) {
         throw createError(
           ERROR_MESSAGES[ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND],
           404,
-          ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND,
-        )
+          ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND
+        );
       }
 
       if (order.status !== "under_review") {
-        throw createError("Order is not under review", 400, ERROR_CODES.INVALID_INPUT)
+        throw createError(
+          "Order is not under review",
+          400,
+          ERROR_CODES.INVALID_INPUT
+        );
       }
 
       if (data.accounts.length !== order.quantity) {
         throw createError(
           `Expected ${order.quantity} accounts but received ${data.accounts.length}`,
           400,
-          ERROR_CODES.INVALID_INPUT,
-        )
+          ERROR_CODES.INVALID_INPUT
+        );
       }
 
       const encryptedAccounts = data.accounts.map((account) => ({
@@ -58,11 +66,11 @@ export class AdminGoogleVoiceService {
         phoneNumber: account.phoneNumber,
         recoveryEmail: account.recoveryEmail,
         encryptedPassword: encrypt(account.password),
-      }))
+      }));
 
       // Set delivery time and expiry (5 minutes)
-      const deliveredAt = new Date()
-      const expiresAt = new Date(deliveredAt.getTime() + 5 * 60 * 1000)
+      const deliveredAt = new Date();
+      const expiresAt = new Date(deliveredAt.getTime() + 5 * 60 * 1000);
 
       await this.googleVoiceOrderRepo.updateStatus(orderId, "delivered", {
         accounts: encryptedAccounts,
@@ -70,12 +78,16 @@ export class AdminGoogleVoiceService {
         expiresAt,
         reviewedBy: adminId,
         reviewedAt: new Date(),
-      })
+      });
 
       // Get user details for email
-      const user = await this.userRepo.findById(order.buyerId.toString())
+      const user = await this.userRepo.findById(order.buyerId.toString());
       if (!user) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND], 404, ERROR_CODES.USER_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND],
+          404,
+          ERROR_CODES.USER_NOT_FOUND
+        );
       }
 
       await this.notificationService.send({
@@ -102,34 +114,40 @@ export class AdminGoogleVoiceService {
           quantity: order.quantity,
           expiresAt,
         },
-      })
+      });
 
-      logger.info(`Google Voice order delivered: ${order.txRef} (${order.quantity} accounts) by admin ${adminId}`)
+      logger.info(
+        `Google Voice order delivered: ${order.txRef} (${order.quantity} accounts) by admin ${adminId}`
+      );
 
       return {
         message: `${order.quantity} account(s) delivered successfully. User has 5 minutes to report issues.`,
         expiresAt,
         accountsDelivered: order.quantity,
-      }
+      };
     } catch (error) {
-      logger.error("Deliver Google Voice order error:", error)
-      throw error
+      logger.error("Deliver Google Voice order error:", error);
+      throw error;
     }
   }
 
   async resolveDispute(adminId: string, orderId: string, resolution: string) {
     try {
-      const order = await this.googleVoiceOrderRepo.findById(orderId)
+      const order = await this.googleVoiceOrderRepo.findById(orderId);
       if (!order) {
         throw createError(
           ERROR_MESSAGES[ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND],
           404,
-          ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND,
-        )
+          ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND
+        );
       }
 
       if (order.status !== "dispute") {
-        throw createError("Order is not in dispute", 400, ERROR_CODES.INVALID_INPUT)
+        throw createError(
+          "Order is not in dispute",
+          400,
+          ERROR_CODES.INVALID_INPUT
+        );
       }
 
       // Update order
@@ -141,7 +159,7 @@ export class AdminGoogleVoiceService {
           resolvedBy: adminId,
           resolvedAt: new Date(),
         },
-      })
+      });
 
       // Notify user
       await this.notificationService.send({
@@ -150,26 +168,33 @@ export class AdminGoogleVoiceService {
         title: "Dispute Resolved",
         message: `Your dispute for order ${order.txRef} has been resolved. Resolution: ${resolution}`,
         channels: ["email"],
-      })
+      });
 
-      logger.info(`Google Voice dispute resolved: ${order.txRef} by admin ${adminId}`)
+      logger.info(
+        `Google Voice dispute resolved: ${order.txRef} by admin ${adminId}`
+      );
 
       return {
         message: "Dispute resolved successfully",
-      }
+      };
     } catch (error) {
-      logger.error("Resolve Google Voice dispute error:", error)
-      throw error
+      logger.error("Resolve Google Voice dispute error:", error);
+      throw error;
     }
   }
 
   async getAllOrders(page = 1, limit = 20, filters: any = {}, search?: string) {
-    const skip = (page - 1) * limit
+    const skip = (page - 1) * limit;
     const [orders, total] = await Promise.all([
-      this.googleVoiceOrderRepo.findAllWithFilters(skip, limit, filters, search),
+      this.googleVoiceOrderRepo.findAllWithFilters(
+        skip,
+        limit,
+        filters,
+        search
+      ),
       this.googleVoiceOrderRepo.countWithFilters(filters, search),
-    ] )
-    
+    ]);
+
     return {
       orders: orders.map((order: any) => ({
         _id: order._id,
@@ -191,7 +216,9 @@ export class AdminGoogleVoiceService {
         deliveredAt: order.deliveredAt,
         expiresAt: order.expiresAt,
         disputeReason: order.disputeReason,
-        reviewedBy: order.reviewedBy ? { name: order.reviewedBy.name, email: order.reviewedBy.email } : null,
+        reviewedBy: order.reviewedBy
+          ? { name: order.reviewedBy.name, email: order.reviewedBy.email }
+          : null,
         reviewedAt: order.reviewedAt,
         completedAt: order.completedAt,
         createdAt: order.createdAt,
@@ -203,6 +230,6 @@ export class AdminGoogleVoiceService {
         total,
         totalPages: Math.ceil(total / limit),
       },
-    }
+    };
   }
 }

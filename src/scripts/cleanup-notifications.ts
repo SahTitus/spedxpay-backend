@@ -1,20 +1,22 @@
-import { connectDatabase } from "../config/database.config"
-import { NotificationService } from "../services/shared/notification.service"
-import { logger } from "../utils/logger"
+import { connectDatabase } from "../config/database.config.js";
+import { NotificationService } from "../services/shared/notification.service.js";
+import { logger } from "../utils/logger.js";
 
 async function cleanupNotifications() {
   try {
-    await connectDatabase()
+    await connectDatabase();
 
-    const notificationService = new NotificationService()
-    const deletedCount = await notificationService.cleanupExpired()
+    const notificationService = new NotificationService();
+    const deletedCount = await notificationService.cleanupExpired();
 
-    logger.info(`Cleanup completed: ${deletedCount} expired notifications deleted`)
-    process.exit(0)
+    logger.info(
+      `Cleanup completed: ${deletedCount} expired notifications deleted`
+    );
+    process.exit(0);
   } catch (error) {
-    logger.error("Cleanup error:", error)
-    process.exit(1)
+    logger.error("Cleanup error:", error);
+    process.exit(1);
   }
 }
 
-cleanupNotifications()
+cleanupNotifications();

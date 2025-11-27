@@ -1,14 +1,14 @@
-import { Router } from "express"
-import { RatesController } from "../controllers/rates/rates.controller"
+import { Router } from "express";
+import { RatesController } from "../controllers/rates/rates.controller.js";
 
-const router = Router()
-const ratesController = new RatesController()
+const router = Router();
+const ratesController = new RatesController();
 
 // Public routes - no authentication required
-router.get("/", ratesController.getAllRates)
-router.get("/:cryptocurrency", ratesController.getRate)
+router.get("/", ratesController.getAllRates);
+router.get("/:cryptocurrency", ratesController.getRate);
 
 // Admin route to manually trigger rate update
-router.post("/update", ratesController.updateRates)
+router.post("/update", ratesController.updateRates);
 
-export default router
+export default router;

@@ -1,28 +1,28 @@
-import mongoose, { Schema, type Document } from "mongoose"
-import { KYC_STATUS, KYC_LEVEL } from "../constants/statuses"
+import mongoose, { Schema, type Document } from "mongoose";
+import { KYC_STATUS, KYC_LEVEL } from "../constants/statuses.js";
 
 export interface IKyc extends Document {
-  userId: mongoose.Types.ObjectId
-  submissionId: string
-  level: string
-  status: string
+  userId: mongoose.Types.ObjectId;
+  submissionId: string;
+  level: string;
+  status: string;
   documents: {
-    idDocument: string
-    selfieDocument: string
-    proofOfAddress?: string
-  }
-  rejectionReason?: string
-  submittedAt: Date
-  reviewedAt?: Date
-  reviewedBy?: mongoose.Types.ObjectId
-  expiresAt?: Date
-  version: number
+    idDocument: string;
+    selfieDocument: string;
+    proofOfAddress?: string;
+  };
+  rejectionReason?: string;
+  submittedAt: Date;
+  reviewedAt?: Date;
+  reviewedBy?: mongoose.Types.ObjectId;
+  expiresAt?: Date;
+  version: number;
   metadata?: {
-    ipAddress?: string
-    userAgent?: string
-  }
-  createdAt: Date
-  updatedAt: Date
+    ipAddress?: string;
+    userAgent?: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const KycSchema = new Schema<IKyc>(
@@ -82,12 +82,12 @@ const KycSchema = new Schema<IKyc>(
   },
   {
     timestamps: true,
-  },
-)
+  }
+);
 
 // Indexes for faster queries
-KycSchema.index({ userId: 1, status: 1 })
-KycSchema.index({ submittedAt: -1 })
-KycSchema.index({ status: 1, submittedAt: -1 })
+KycSchema.index({ userId: 1, status: 1 });
+KycSchema.index({ submittedAt: -1 });
+KycSchema.index({ status: 1, submittedAt: -1 });
 
-export const Kyc = mongoose.model<IKyc>("Kyc", KycSchema)
+export const Kyc = mongoose.model<IKyc>("Kyc", KycSchema);

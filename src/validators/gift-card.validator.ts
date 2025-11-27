@@ -1,5 +1,5 @@
-import Joi from "joi"
-import { GIFT_CARD_TYPES } from "../constants/currencies"
+import Joi from "joi";
+import { GIFT_CARD_TYPES } from "../constants/currencies.js";
 
 export const sellGiftCardSchema = Joi.object({
   type: Joi.string()
@@ -54,7 +54,7 @@ export const sellGiftCardSchema = Joi.object({
     "number.min": "Payment method index must be 0 or greater",
     "any.required": "Payment method index is required",
   }),
-})
+});
 
 export const buyGiftCardSchema = Joi.object({
   type: Joi.string()
@@ -68,11 +68,14 @@ export const buyGiftCardSchema = Joi.object({
     "number.positive": "Face value must be positive",
     "any.required": "Face value is required",
   }),
-  paymentMethod: Joi.string().valid("momo", "bank", "paystack").required().messages({
-    "any.only": "Payment method must be 'momo', 'bank', or 'paystack'",
-    "any.required": "Payment method is required",
-  }),
-})
+  paymentMethod: Joi.string()
+    .valid("momo", "bank", "paystack")
+    .required()
+    .messages({
+      "any.only": "Payment method must be 'momo', 'bank', or 'paystack'",
+      "any.required": "Payment method is required",
+    }),
+});
 
 export const giftCardActionSchema = Joi.object({
   proofOfPayment: Joi.string().uri().optional().messages({
@@ -81,10 +84,10 @@ export const giftCardActionSchema = Joi.object({
   // proofOfSend: Joi.string().uri().optional().messages({
   //   "string.uri": "Proof of send must be a valid URL",
   // }),
-})
+});
 
 export const giftCardIdParamSchema = Joi.object({
   giftCardId: Joi.string().required().messages({
     "any.required": "Gift card ID is required",
   }),
-})
+});

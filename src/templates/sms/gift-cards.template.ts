@@ -1,4 +1,4 @@
-import { appConfig } from "../../config/app.config";
+import { appConfig } from "../../config/app.config.js";
 
 export const getGiftCardSellCreatedSMS = (
   txRef: string,

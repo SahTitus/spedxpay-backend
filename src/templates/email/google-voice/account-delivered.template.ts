@@ -1,24 +1,26 @@
-import { getEmailLayout, type EmailTemplateData } from "../base.template"
+import { getEmailLayout, type EmailTemplateData } from "../base.template.js";
 
 export interface GoogleVoiceDeliveredEmailData extends EmailTemplateData {
-  txRef: string
-  quantity: number
+  txRef: string;
+  quantity: number;
   accounts: Array<{
-    accountEmail: string
-    phoneNumber: string
-    recoveryEmail: string
-    password: string
-  }>
-  expiresAt: string
-  reportWindowMinutes: number
+    accountEmail: string;
+    phoneNumber: string;
+    recoveryEmail: string;
+    password: string;
+  }>;
+  expiresAt: string;
+  reportWindowMinutes: number;
 }
 
-export const getGoogleVoiceDeliveredEmail = (data: GoogleVoiceDeliveredEmailData) => {
-  const expiryDate = new Date(data.expiresAt)
+export const getGoogleVoiceDeliveredEmail = (
+  data: GoogleVoiceDeliveredEmailData
+) => {
+  const expiryDate = new Date(data.expiresAt);
   const formattedExpiry = expiryDate.toLocaleString("en-US", {
     dateStyle: "medium",
     timeStyle: "short",
-  })
+  });
 
   const accountsHtml = data.accounts
     .map(
@@ -48,9 +50,9 @@ export const getGoogleVoiceDeliveredEmail = (data: GoogleVoiceDeliveredEmailData
         <span class="info-value" style="background-color: #fef3c7; padding: 4px 8px; border-radius: 4px; font-family: monospace;">${account.password}</span>
       </div>
     </div>
-  `,
+  `
     )
-    .join("")
+    .join("");
 
   const content = `
     <div class="greeting">Your Google Voice Account${data.quantity > 1 ? "s" : ""} ${data.quantity > 1 ? "Are" : "Is"} Ready!</div>
@@ -126,13 +128,13 @@ export const getGoogleVoiceDeliveredEmail = (data: GoogleVoiceDeliveredEmailData
       Thank you for your purchase!<br>
       <strong>The SpedXpay Support Team</strong>
     </div>
-  `
+  `;
 
   return {
     subject: `Your Google Voice Account${data.quantity > 1 ? "s" : ""} Delivered - Order ${data.txRef}`,
     html: getEmailLayout(
       content,
-      `Your Google Voice account${data.quantity > 1 ? "s have" : " has"} been delivered - Order ${data.txRef}`,
+      `Your Google Voice account${data.quantity > 1 ? "s have" : " has"} been delivered - Order ${data.txRef}`
     ),
-  }
-}
+  };
+};

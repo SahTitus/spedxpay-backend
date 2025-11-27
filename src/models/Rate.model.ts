@@ -1,14 +1,14 @@
-import mongoose, { Schema, type Document } from "mongoose"
-import { CRYPTO_CURRENCIES } from "../constants/currencies"
+import mongoose, { Schema, type Document } from "mongoose";
+import { CRYPTO_CURRENCIES } from "../constants/currencies.js";
 
 export interface IRate extends Document {
-  cryptocurrency: string
-  buyRate: number
-  sellRate: number
-  source: string
-  lastUpdated: Date
-  metadata?: Record<string, any>
-  createdAt: Date
+  cryptocurrency: string;
+  buyRate: number;
+  sellRate: number;
+  source: string;
+  lastUpdated: Date;
+  metadata?: Record<string, any>;
+  createdAt: Date;
 }
 
 const RateSchema = new Schema<IRate>(
@@ -42,10 +42,10 @@ const RateSchema = new Schema<IRate>(
   },
   {
     timestamps: true,
-  },
-)
+  }
+);
 
 // Index for efficient queries
-RateSchema.index({ cryptocurrency: 1, lastUpdated: -1 })
+RateSchema.index({ cryptocurrency: 1, lastUpdated: -1 });
 
-export const Rate = mongoose.model<IRate>("Rate", RateSchema)
+export const Rate = mongoose.model<IRate>("Rate", RateSchema);

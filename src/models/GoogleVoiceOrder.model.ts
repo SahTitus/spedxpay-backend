@@ -1,35 +1,35 @@
-import mongoose, { Schema, type Document } from "mongoose"
-import type { DateExpressionOperator} from "mongoose"
-import { decrypt } from "../utils/encryption"
+import mongoose, { Schema, type Document } from "mongoose";
+import type { DateExpressionOperator } from "mongoose";
+import { decrypt } from "../utils/encryption.js";
 
 export interface IAccountDetails {
-  accountEmail: string
-  phoneNumber: string
-  recoveryEmail: string
-  encryptedPassword: string
+  accountEmail: string;
+  phoneNumber: string;
+  recoveryEmail: string;
+  encryptedPassword: string;
 }
 
 export interface IGoogleVoiceOrder extends Document {
-  buyerId: mongoose.Types.ObjectId
-  quantity: number
-  accounts: IAccountDetails[]
-  priceUsd: number
-  priceGhs: number
-  status: string
-  paymentMethod: string
-  txRef: string
-  deliveredAt?: Date
-  expiresAt?: Date
-  reportWindowMinutes: number
-  disputeReason?: string
-  disputeReportedAt?: Date
-  reviewedBy?: mongoose.Types.ObjectId
-  reviewedAt?: Date
-  completedAt?: Date
-  metadata?: Record<string, any>
-  createdAt: Date
-  updatedAt: DateExpressionOperator
-  getDecryptedPasswords(): Array<{ accountEmail: string; password: string }>
+  buyerId: mongoose.Types.ObjectId;
+  quantity: number;
+  accounts: IAccountDetails[];
+  priceUsd: number;
+  priceGhs: number;
+  status: string;
+  paymentMethod: string;
+  txRef: string;
+  deliveredAt?: Date;
+  expiresAt?: Date;
+  reportWindowMinutes: number;
+  disputeReason?: string;
+  disputeReportedAt?: Date;
+  reviewedBy?: mongoose.Types.ObjectId;
+  reviewedAt?: Date;
+  completedAt?: Date;
+  metadata?: Record<string, any>;
+  createdAt: Date;
+  updatedAt: DateExpressionOperator;
+  getDecryptedPasswords(): Array<{ accountEmail: string; password: string }>;
 }
 
 const AccountDetailsSchema = new Schema<IAccountDetails>(
@@ -52,8 +52,8 @@ const AccountDetailsSchema = new Schema<IAccountDetails>(
       select: false,
     },
   },
-  { _id: false },
-)
+  { _id: false }
+);
 
 const GoogleVoiceOrderSchema = new Schema<IGoogleVoiceOrder>(
   {
@@ -84,7 +84,15 @@ const GoogleVoiceOrderSchema = new Schema<IGoogleVoiceOrder>(
     },
     status: {
       type: String,
-      enum: ["pending", "under_review", "delivered", "completed", "dispute", "rejected", "cancelled"],
+      enum: [
+        "pending",
+        "under_review",
+        "delivered",
+        "completed",
+        "dispute",
+        "rejected",
+        "cancelled",
+      ],
       default: "pending",
       index: true,
     },
@@ -131,17 +139,20 @@ const GoogleVoiceOrderSchema = new Schema<IGoogleVoiceOrder>(
   },
   {
     timestamps: true,
-  },
-)
+  }
+);
 
 GoogleVoiceOrderSchema.methods.getDecryptedPasswords = function (): Array<{
-  accountEmail: string
-  password: string
+  accountEmail: string;
+  password: string;
 }> {
   return this.accounts.map((account: IAccountDetails) => ({
     accountEmail: account.accountEmail,
     password: decrypt(account.encryptedPassword),
-  }))
-}
+  }));
+};
 
-export const GoogleVoiceOrder = mongoose.model<IGoogleVoiceOrder>("GoogleVoiceOrder", GoogleVoiceOrderSchema)
+export const GoogleVoiceOrder = mongoose.model<IGoogleVoiceOrder>(
+  "GoogleVoiceOrder",
+  GoogleVoiceOrderSchema
+);

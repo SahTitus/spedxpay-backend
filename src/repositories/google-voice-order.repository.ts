@@ -1,22 +1,25 @@
-import { BaseRepository } from "./base/base.repository"
-import { GoogleVoiceOrder, type IGoogleVoiceOrder } from "../models/GoogleVoiceOrder.model"
-import { User } from "../models/User.model"
+import { BaseRepository } from "./base/base.repository";
+import {
+  GoogleVoiceOrder,
+  type IGoogleVoiceOrder,
+} from "../models/GoogleVoiceOrder.model.js";
+import { User } from "../models/User.model.js";
 
 export class GoogleVoiceOrderRepository extends BaseRepository<IGoogleVoiceOrder> {
   constructor() {
-    super(GoogleVoiceOrder)
+    super(GoogleVoiceOrder);
   }
 
   async findByBuyerId(buyerId: string, status?: string) {
-    const filter: any = { buyerId }
+    const filter: any = { buyerId };
     if (status) {
-      filter.status = status
+      filter.status = status;
     }
-    return this.model.find(filter).sort({ createdAt: -1 }).exec()
+    return this.model.find(filter).sort({ createdAt: -1 }).exec();
   }
 
   async findByTxRef(txRef: string) {
-    return this.model.findOne({ txRef }).exec()
+    return this.model.findOne({ txRef }).exec();
   }
 
   async findPendingOrders() {
@@ -26,7 +29,7 @@ export class GoogleVoiceOrderRepository extends BaseRepository<IGoogleVoiceOrder
       })
       .populate("buyerId", "name email")
       .sort({ createdAt: -1 })
-      .exec()
+      .exec();
   }
 
   async findExpiredDisputeWindows() {
@@ -35,7 +38,7 @@ export class GoogleVoiceOrderRepository extends BaseRepository<IGoogleVoiceOrder
         status: "delivered",
         expiresAt: { $lt: new Date() },
       })
-      .exec()
+      .exec();
   }
 
   async updateStatus(orderId: string, status: string, additionalData?: any) {
@@ -46,35 +49,44 @@ export class GoogleVoiceOrderRepository extends BaseRepository<IGoogleVoiceOrder
           status,
           ...additionalData,
         },
-        { new: true },
+        { new: true }
       )
-      .exec()
+      .exec();
   }
 
   async findByIdWithPassword(orderId: string) {
-    return this.model.findById(orderId).select("+encryptedPassword").exec()
+    return this.model.findById(orderId).select("+encryptedPassword").exec();
   }
 
-  async findAllWithFilters(skip = 0, limit = 20, filters: any = {}, search?: string) {
-    const query: any = {}
+  async findAllWithFilters(
+    skip = 0,
+    limit = 20,
+    filters: any = {},
+    search?: string
+  ) {
+    const query: any = {};
 
     // Apply status filter
     if (filters.status) {
-      query.status = filters.status
+      query.status = filters.status;
     }
 
     // Apply comprehensive search
     if (search) {
-      const searchRegex = { $regex: search, $options: "i" }
+      const searchRegex = { $regex: search, $options: "i" };
 
       // First, search for matching users
       const matchingUsers = await User.find({
-        $or: [{ name: searchRegex }, { email: searchRegex }, { phone: searchRegex }],
+        $or: [
+          { name: searchRegex },
+          { email: searchRegex },
+          { phone: searchRegex },
+        ],
       })
         .select("_id")
-        .lean()
+        .lean();
 
-      const userIds = matchingUsers.map((u) => u._id)
+      const userIds = matchingUsers.map((u) => u._id);
 
       // Build search query including user IDs and order fields
       query.$or = [
@@ -83,7 +95,7 @@ export class GoogleVoiceOrderRepository extends BaseRepository<IGoogleVoiceOrder
         { "accounts.accountEmail": searchRegex },
         { "accounts.phoneNumber": searchRegex },
         { "accounts.recoveryEmail": searchRegex },
-      ]
+      ];
     }
 
     return this.model
@@ -93,27 +105,31 @@ export class GoogleVoiceOrderRepository extends BaseRepository<IGoogleVoiceOrder
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .exec()
+      .exec();
   }
 
   async countWithFilters(filters: any = {}, search?: string) {
-    const query: any = {}
+    const query: any = {};
 
     if (filters.status) {
-      query.status = filters.status
+      query.status = filters.status;
     }
 
     if (search) {
-      const searchRegex = { $regex: search, $options: "i" }
+      const searchRegex = { $regex: search, $options: "i" };
 
       // Search for matching users
       const matchingUsers = await User.find({
-        $or: [{ name: searchRegex }, { email: searchRegex }, { phone: searchRegex }],
+        $or: [
+          { name: searchRegex },
+          { email: searchRegex },
+          { phone: searchRegex },
+        ],
       })
         .select("_id")
-        .lean()
+        .lean();
 
-      const userIds = matchingUsers.map((u) => u._id)
+      const userIds = matchingUsers.map((u) => u._id);
 
       query.$or = [
         { buyerId: { $in: userIds } },
@@ -121,9 +137,9 @@ export class GoogleVoiceOrderRepository extends BaseRepository<IGoogleVoiceOrder
         { "accounts.accountEmail": searchRegex },
         { "accounts.phoneNumber": searchRegex },
         { "accounts.recoveryEmail": searchRegex },
-      ]
+      ];
     }
 
-    return this.model.countDocuments(query).exec()
+    return this.model.countDocuments(query).exec();
   }
 }

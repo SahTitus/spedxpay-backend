@@ -1,13 +1,13 @@
-import { BaseRepository } from "./base/base.repository"
-import { User, type IUser } from "../models/User.model"
+import { BaseRepository } from "./base/base.repository";
+import { User, type IUser } from "../models/User.model.js";
 
 export class UserRepository extends BaseRepository<IUser> {
   constructor() {
-    super(User)
+    super(User);
   }
 
   async findByEmail(email: string): Promise<IUser | null> {
-    return this.model.findOne({ email }).select("+password").exec()
+    return this.model.findOne({ email }).select("+password").exec();
   }
 
   async findByEmailVerificationToken(token: string): Promise<IUser | null> {
@@ -16,7 +16,7 @@ export class UserRepository extends BaseRepository<IUser> {
         emailVerificationToken: token,
         emailVerificationExpires: { $gt: Date.now() },
       })
-      .exec()
+      .exec();
   }
 
   async findByResetPasswordToken(token: string): Promise<IUser | null> {
@@ -26,17 +26,17 @@ export class UserRepository extends BaseRepository<IUser> {
         resetPasswordExpires: { $gt: Date.now() },
       })
       .select("+password")
-      .exec()
+      .exec();
   }
 
   async addPaymentMethod(
     userId: string,
     paymentMethod: {
-      type: string
-      details: any
-      verified: boolean
-      isPrimary: boolean
-    },
+      type: string;
+      details: any;
+      verified: boolean;
+      isPrimary: boolean;
+    }
   ): Promise<IUser | null> {
     return this.model
       .findByIdAndUpdate(
@@ -44,35 +44,41 @@ export class UserRepository extends BaseRepository<IUser> {
         {
           $push: { paymentMethods: paymentMethod },
         },
-        { new: true },
+        { new: true }
       )
-      .exec()
+      .exec();
   }
 
-  async updatePaymentMethod(userId: string, methodIndex: number, updates: any): Promise<IUser | null> {
-    const updateQuery: any = {}
+  async updatePaymentMethod(
+    userId: string,
+    methodIndex: number,
+    updates: any
+  ): Promise<IUser | null> {
+    const updateQuery: any = {};
     Object.keys(updates).forEach((key) => {
-      updateQuery[`paymentMethods.${methodIndex}.${key}`] = updates[key]
-    })
+      updateQuery[`paymentMethods.${methodIndex}.${key}`] = updates[key];
+    });
 
-    return this.model.findByIdAndUpdate(userId, updateQuery, { new: true }).exec()
+    return this.model
+      .findByIdAndUpdate(userId, updateQuery, { new: true })
+      .exec();
   }
 
   async findByRole(role: string): Promise<IUser[]> {
-    return this.model.find({ role }).exec()
+    return this.model.find({ role }).exec();
   }
 
   async findAllWithPagination(
     skip: number,
     limit: number,
     filters: { role?: string },
-    search?: string,
+    search?: string
   ): Promise<IUser[]> {
-    const query: any = {}
+    const query: any = {};
 
     // Apply role filter
     if (filters.role) {
-      query.role = filters.role
+      query.role = filters.role;
     }
 
     // Apply search across name, email, and phone
@@ -81,17 +87,25 @@ export class UserRepository extends BaseRepository<IUser> {
         { name: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } },
         { phone: { $regex: search, $options: "i" } },
-      ]
+      ];
     }
 
-    return this.model.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).exec()
+    return this.model
+      .find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
   }
 
-  async countWithFilters(filters: { role?: string }, search?: string): Promise<number> {
-    const query: any = {}
+  async countWithFilters(
+    filters: { role?: string },
+    search?: string
+  ): Promise<number> {
+    const query: any = {};
 
     if (filters.role) {
-      query.role = filters.role
+      query.role = filters.role;
     }
 
     if (search) {
@@ -99,21 +113,24 @@ export class UserRepository extends BaseRepository<IUser> {
         { name: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } },
         { phone: { $regex: search, $options: "i" } },
-      ]
+      ];
     }
 
-    return this.model.countDocuments(query).exec()
+    return this.model.countDocuments(query).exec();
   }
 
-    async removePaymentMethod(userId: string, paymentMethodId: string): Promise<IUser | null> {
+  async removePaymentMethod(
+    userId: string,
+    paymentMethodId: string
+  ): Promise<IUser | null> {
     return this.model
       .findByIdAndUpdate(
         userId,
         {
           $pull: { paymentMethods: { _id: paymentMethodId } },
         },
-        { new: true },
+        { new: true }
       )
-      .exec()
+      .exec();
   }
 }

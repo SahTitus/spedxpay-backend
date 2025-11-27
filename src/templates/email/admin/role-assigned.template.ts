@@ -1,10 +1,10 @@
-import { getEmailLayout } from "../base.template"
+import { getEmailLayout } from "../base.template.js";
 
 export interface RoleAssignedEmailData {
-  userName: string
-  oldRole: string
-  newRole: string
-  assignedBy: string
+  userName: string;
+  oldRole: string;
+  newRole: string;
+  assignedBy: string;
 }
 
 export const getRoleAssignedEmail = (data: RoleAssignedEmailData) => {
@@ -13,7 +13,7 @@ export const getRoleAssignedEmail = (data: RoleAssignedEmailData) => {
     admin: "Admin",
     assistant_admin: "Assistant Admin",
     super_admin: "Super Admin",
-  }
+  };
 
   const content = `
     <div class="greeting">Hello ${data.userName},</div>
@@ -56,10 +56,10 @@ export const getRoleAssignedEmail = (data: RoleAssignedEmailData) => {
     <div class="footer-note">
       If you believe this change was made in error, please contact our support team immediately.
     </div>
-  `
+  `;
 
   return {
     subject: "Your Role Has Been Updated",
     html: getEmailLayout(content, "Role Update Notification"),
-  }
-}
+  };
+};

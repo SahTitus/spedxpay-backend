@@ -1,106 +1,132 @@
-import { GiftCardRepository } from "../../repositories/gift-card.repository"
-import { UserRepository } from "../../repositories/user.repository"
-import { KycRepository } from "../../repositories/kyc.repository" 
-import { GiftCardTypeRepository } from "../../repositories/gift-card-type.repository"
-import { NotificationService } from "../../services/shared/notification.service"
-import { createError } from "../../middlewares/common/error.middleware"
-import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
-import { KYC_STATUS } from "../../constants/statuses"
-import { logger } from "../../utils/logger"
-import { v4 as uuidv4 } from "uuid"
+import { GiftCardRepository } from "../../repositories/gift-card.repository.js";
+import { UserRepository } from "../../repositories/user.repository.js";
+import { KycRepository } from "../../repositories/kyc.repository.js";
+import { GiftCardTypeRepository } from "../../repositories/gift-card-type.repository.js";
+import { NotificationService } from "../../services/shared/notification.service.js";
+import { createError } from "../../middlewares/common/error.middleware.js";
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes.js";
+import { KYC_STATUS } from "../../constants/statuses.js";
+import { logger } from "../../utils/logger.js";
+import { v4 as uuidv4 } from "uuid";
 
 export interface SellGiftCardDto {
-  type: string
-  faceValue: number
-  cardForm: "electronic" | "physical"
+  type: string;
+  faceValue: number;
+  cardForm: "electronic" | "physical";
   cardDetails?: {
-    pin?: string
-    serial?: string
-  }
+    pin?: string;
+    serial?: string;
+  };
   photos?: {
-    front?: string
-    back?: string
-  }
-  receiptPhoto?: string
-  paymentMethod: string
-  paymentMethodIndex: number
+    front?: string;
+    back?: string;
+  };
+  receiptPhoto?: string;
+  paymentMethod: string;
+  paymentMethodIndex: number;
 }
 
 export interface BuyGiftCardDto {
-  type: string
-  faceValue: number
-  paymentMethod: string
+  type: string;
+  faceValue: number;
+  paymentMethod: string;
 }
 
 export class GiftCardService {
-  private giftCardRepo: GiftCardRepository
-  private userRepo: UserRepository
-  private kycRepo: KycRepository // Added KYC repository
-  private giftCardTypeRepo: GiftCardTypeRepository // Added GiftCardTypeRepository
-  private notificationService: NotificationService
+  private giftCardRepo: GiftCardRepository;
+  private userRepo: UserRepository;
+  private kycRepo: KycRepository; // Added KYC repository
+  private giftCardTypeRepo: GiftCardTypeRepository; // Added GiftCardTypeRepository
+  private notificationService: NotificationService;
 
   constructor() {
-    this.giftCardRepo = new GiftCardRepository()
-    this.userRepo = new UserRepository()
-    this.kycRepo = new KycRepository() // Initialize KYC repository
-    this.giftCardTypeRepo = new GiftCardTypeRepository() // Initialize GiftCardTypeRepository
-    this.notificationService = new NotificationService()
+    this.giftCardRepo = new GiftCardRepository();
+    this.userRepo = new UserRepository();
+    this.kycRepo = new KycRepository(); // Initialize KYC repository
+    this.giftCardTypeRepo = new GiftCardTypeRepository(); // Initialize GiftCardTypeRepository
+    this.notificationService = new NotificationService();
   }
 
   async getAvailableTypes() {
-    return this.giftCardTypeRepo.findAll(true) // Only active types
+    return this.giftCardTypeRepo.findAll(true); // Only active types
   }
 
   async sellGiftCard(userId: string, data: SellGiftCardDto) {
     try {
-      const giftCardType = await this.giftCardTypeRepo.findByCode(data.type)
+      const giftCardType = await this.giftCardTypeRepo.findByCode(data.type);
       if (!giftCardType || !giftCardType.isActive) {
-        throw createError("Invalid or inactive gift card type", 400, ERROR_CODES.INVALID_INPUT)
+        throw createError(
+          "Invalid or inactive gift card type",
+          400,
+          ERROR_CODES.INVALID_INPUT
+        );
       }
 
       // Verify user and KYC
-      const user = await this.userRepo.findById(userId)
+      const user = await this.userRepo.findById(userId);
       if (!user) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND], 404, ERROR_CODES.USER_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND],
+          404,
+          ERROR_CODES.USER_NOT_FOUND
+        );
       }
 
-      const kyc = await this.kycRepo.findLatestByUserId(userId)
+      const kyc = await this.kycRepo.findLatestByUserId(userId);
       if (!kyc || kyc.status !== KYC_STATUS.APPROVED) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.KYC_NOT_APPROVED], 403, ERROR_CODES.KYC_NOT_APPROVED)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.KYC_NOT_APPROVED],
+          403,
+          ERROR_CODES.KYC_NOT_APPROVED
+        );
       }
 
       // Verify payment method
-      const paymentMethod = user.paymentMethods[data.paymentMethodIndex]
+      const paymentMethod = user.paymentMethods[data.paymentMethodIndex];
       if (!paymentMethod) {
         throw createError(
           ERROR_MESSAGES[ERROR_CODES.PAYMENT_METHOD_NOT_FOUND],
           404,
-          ERROR_CODES.PAYMENT_METHOD_NOT_FOUND,
-        )
+          ERROR_CODES.PAYMENT_METHOD_NOT_FOUND
+        );
       }
 
       if (!paymentMethod.verified) {
         throw createError(
           ERROR_MESSAGES[ERROR_CODES.PAYMENT_METHOD_NOT_VERIFIED],
           400,
-          ERROR_CODES.PAYMENT_METHOD_NOT_VERIFIED,
-        )
+          ERROR_CODES.PAYMENT_METHOD_NOT_VERIFIED
+        );
       }
 
       // Validate card form requirements
-      if (data.cardForm === "electronic" && (!data.cardDetails?.pin || !data.cardDetails?.serial)) {
-        throw createError("Electronic cards require PIN and serial number", 400, ERROR_CODES.INVALID_INPUT)
+      if (
+        data.cardForm === "electronic" &&
+        (!data.cardDetails?.pin || !data.cardDetails?.serial)
+      ) {
+        throw createError(
+          "Electronic cards require PIN and serial number",
+          400,
+          ERROR_CODES.INVALID_INPUT
+        );
       }
 
-      if (data.cardForm === "physical" && (!data.photos?.front || !data.photos?.back)) {
-        throw createError("Physical cards require front and back photos", 400, ERROR_CODES.INVALID_INPUT)
+      if (
+        data.cardForm === "physical" &&
+        (!data.photos?.front || !data.photos?.back)
+      ) {
+        throw createError(
+          "Physical cards require front and back photos",
+          400,
+          ERROR_CODES.INVALID_INPUT
+        );
       }
 
       // Calculate amount to receive (70% of face value as example)
-      const amountToReceive = data.faceValue * 0.7
+      const amountToReceive = data.faceValue * 0.7;
 
       // Create gift card
-      const txRef = `SELL-GC-${uuidv4()}`
+      const txRef = `SELL-GC-${uuidv4()}`;
 
       const giftCard = await this.giftCardRepo.create({
         sellerId: userId,
@@ -115,7 +141,7 @@ export class GiftCardService {
         paymentMethod: data.paymentMethod,
         paymentDetails: paymentMethod.details,
         txRef,
-      } as any)
+      } as any);
 
       await this.notificationService.send({
         userId: userId,
@@ -138,9 +164,9 @@ export class GiftCardService {
           giftCardId: giftCard._id,
           txRef: giftCard.txRef,
         },
-      })
+      });
 
-      logger.info(`Gift card sale order created: ${txRef}`)
+      logger.info(`Gift card sale order created: ${txRef}`);
 
       return {
         order: {
@@ -153,29 +179,38 @@ export class GiftCardService {
           status: giftCard.status,
           createdAt: giftCard.createdAt,
         },
-        message: "Gift card sale order created. Please sell your card and click 'I Have Sent' to proceed.",
-      }
+        message:
+          "Gift card sale order created. Please sell your card and click 'I Have Sent' to proceed.",
+      };
     } catch (error) {
-      logger.error("Sell gift card error:", error)
-      throw error
+      logger.error("Sell gift card error:", error);
+      throw error;
     }
   }
 
   async buyGiftCard(userId: string, data: BuyGiftCardDto) {
     try {
-      const giftCardType = await this.giftCardTypeRepo.findByCode(data.type)
+      const giftCardType = await this.giftCardTypeRepo.findByCode(data.type);
       if (!giftCardType || !giftCardType.isActive) {
-        throw createError("Invalid or inactive gift card type", 400, ERROR_CODES.INVALID_INPUT)
+        throw createError(
+          "Invalid or inactive gift card type",
+          400,
+          ERROR_CODES.INVALID_INPUT
+        );
       }
 
-      const user = await this.userRepo.findById(userId)
+      const user = await this.userRepo.findById(userId);
       if (!user) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND], 404, ERROR_CODES.USER_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND],
+          404,
+          ERROR_CODES.USER_NOT_FOUND
+        );
       }
 
-      const price = data.faceValue * 1.2
+      const price = data.faceValue * 1.2;
 
-      const txRef = `BUY-GC-${uuidv4()}`
+      const txRef = `BUY-GC-${uuidv4()}`;
 
       const giftCard = await this.giftCardRepo.create({
         buyerId: userId,
@@ -186,9 +221,9 @@ export class GiftCardService {
         paymentMethod: data.paymentMethod,
         txRef,
         cardForm: "electronic", // Default for buying
-      } as any)
+      } as any);
 
-      logger.info(`Gift card purchase initiated: ${txRef}`)
+      logger.info(`Gift card purchase initiated: ${txRef}`);
 
       return {
         giftCard: {
@@ -199,25 +234,41 @@ export class GiftCardService {
           price: giftCard.price,
         },
         message: "Gift card purchase initiated. Please complete payment.",
-      }
+      };
     } catch (error) {
-      logger.error("Buy gift card error:", error)
-      throw error
+      logger.error("Buy gift card error:", error);
+      throw error;
     }
   }
 
-  async iHavePaidForGiftCard(userId: string, giftCardId: string, proofOfPayment?: string) {
+  async iHavePaidForGiftCard(
+    userId: string,
+    giftCardId: string,
+    proofOfPayment?: string
+  ) {
     try {
-      const giftCard = await this.giftCardRepo.findById(giftCardId)
+      const giftCard = await this.giftCardRepo.findById(giftCardId);
       if (!giftCard) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.GIFT_CARD_NOT_FOUND], 404, ERROR_CODES.GIFT_CARD_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.GIFT_CARD_NOT_FOUND],
+          404,
+          ERROR_CODES.GIFT_CARD_NOT_FOUND
+        );
       }
 
       if (giftCard.buyerId && giftCard.buyerId?.toString() !== userId) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.FORBIDDEN], 403, ERROR_CODES.FORBIDDEN)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.FORBIDDEN],
+          403,
+          ERROR_CODES.FORBIDDEN
+        );
       }
       if (giftCard.sellerId && giftCard.sellerId?.toString() !== userId) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.FORBIDDEN], 403, ERROR_CODES.FORBIDDEN)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.FORBIDDEN],
+          403,
+          ERROR_CODES.FORBIDDEN
+        );
       }
 
       // Update status
@@ -227,7 +278,7 @@ export class GiftCardService {
           proofOfPayment,
           paidAt: new Date(),
         },
-      })
+      });
 
       // Notify admin
       await this.notificationService.send({
@@ -241,58 +292,86 @@ export class GiftCardService {
           txRef: giftCard.txRef,
           link: `/admin/gift-cards/${giftCard._id}`,
         },
-      })
+      });
 
-      logger.info(`User marked gift card payment as sent: ${giftCard.txRef}`)
+      logger.info(`User marked gift card payment as sent: ${giftCard.txRef}`);
 
       return {
-        message: "Payment confirmation received. Admin will verify and send card details.",
-      }
+        message:
+          "Payment confirmation received. Admin will verify and send card details.",
+      };
     } catch (error) {
-      logger.error("I have paid for gift card error:", error)
-      throw error
+      logger.error("I have paid for gift card error:", error);
+      throw error;
     }
   }
 
   async getUserSoldGiftCards(userId: string, status?: string) {
-    return this.giftCardRepo.findBySellerId(userId, status)
+    return this.giftCardRepo.findBySellerId(userId, status);
   }
 
   async getUserPurchasedGiftCards(userId: string) {
-    return this.giftCardRepo.findByBuyerId(userId)
+    return this.giftCardRepo.findByBuyerId(userId);
   }
 
   async getGiftCard(userId: string, giftCardId: string) {
-    const giftCard = await this.giftCardRepo.findById(giftCardId)
+    const giftCard = await this.giftCardRepo.findById(giftCardId);
     if (!giftCard) {
-      throw createError(ERROR_MESSAGES[ERROR_CODES.GIFT_CARD_NOT_FOUND], 404, ERROR_CODES.GIFT_CARD_NOT_FOUND)
+      throw createError(
+        ERROR_MESSAGES[ERROR_CODES.GIFT_CARD_NOT_FOUND],
+        404,
+        ERROR_CODES.GIFT_CARD_NOT_FOUND
+      );
     }
 
     // Check if user is seller or buyer
-    if (giftCard.sellerId?.toString() !== userId && giftCard.buyerId?.toString() !== userId) {
-      throw createError(ERROR_MESSAGES[ERROR_CODES.FORBIDDEN], 403, ERROR_CODES.FORBIDDEN)
+    if (
+      giftCard.sellerId?.toString() !== userId &&
+      giftCard.buyerId?.toString() !== userId
+    ) {
+      throw createError(
+        ERROR_MESSAGES[ERROR_CODES.FORBIDDEN],
+        403,
+        ERROR_CODES.FORBIDDEN
+      );
     }
 
-    return giftCard
+    return giftCard;
   }
 
-  async iHaveSentGiftCard(userId: string, giftCardId: string, proofOfSend?: string) {
+  async iHaveSentGiftCard(
+    userId: string,
+    giftCardId: string,
+    proofOfSend?: string
+  ) {
     try {
-      const giftCard = await this.giftCardRepo.findById(giftCardId)
+      const giftCard = await this.giftCardRepo.findById(giftCardId);
       if (!giftCard) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.GIFT_CARD_NOT_FOUND], 404, ERROR_CODES.GIFT_CARD_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.GIFT_CARD_NOT_FOUND],
+          404,
+          ERROR_CODES.GIFT_CARD_NOT_FOUND
+        );
       }
 
-      console.log(giftCard.sellerId?.toString(), userId)
+      console.log(giftCard.sellerId?.toString(), userId);
       if (giftCard.sellerId?.toString() !== userId) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.FORBIDDEN], 403, ERROR_CODES.FORBIDDEN)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.FORBIDDEN],
+          403,
+          ERROR_CODES.FORBIDDEN
+        );
       }
 
       if (giftCard.status !== "pending") {
-        throw createError("Gift card is not in pending status", 400, ERROR_CODES.INVALID_INPUT)
+        throw createError(
+          "Gift card is not in pending status",
+          400,
+          ERROR_CODES.INVALID_INPUT
+        );
       }
 
-      const user = await this.userRepo.findById(userId)
+      const user = await this.userRepo.findById(userId);
 
       // Update status to under_review
       await this.giftCardRepo.updateStatus(giftCardId, "under_review", {
@@ -301,7 +380,7 @@ export class GiftCardService {
           proofOfSend,
           sentAt: new Date(),
         },
-      })
+      });
 
       // Notify admin
       await this.notificationService.send({
@@ -328,16 +407,17 @@ export class GiftCardService {
           faceValue: giftCard.faceValue,
           link: `/admin/gift-cards/${giftCard._id}`,
         },
-      })
+      });
 
-      logger.info(`User marked gift card as sent: ${giftCard.txRef}`)
+      logger.info(`User marked gift card as sent: ${giftCard.txRef}`);
 
       return {
-        message: "Gift card marked as sent. Admin will review and process your payment.",
-      }
+        message:
+          "Gift card marked as sent. Admin will review and process your payment.",
+      };
     } catch (error) {
-      logger.error("I have sent gift card error:", error)
-      throw error
+      logger.error("I have sent gift card error:", error);
+      throw error;
     }
   }
 }

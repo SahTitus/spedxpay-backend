@@ -1,40 +1,40 @@
-import mongoose, { Schema, type Document } from "mongoose"
-import { GIFT_CARD_TYPES } from "../constants/currencies"
+import mongoose, { Schema, type Document } from "mongoose";
+import { GIFT_CARD_TYPES } from "../constants/currencies.js";
 
 export interface IGiftCard extends Document {
-  sellerId?: mongoose.Types.ObjectId
-  buyerId?: mongoose.Types.ObjectId
-  type: string
-  faceValue: number
-  price?: number
-  amountToReceive?: number
-  cardForm: "electronic" | "physical"
+  sellerId?: mongoose.Types.ObjectId;
+  buyerId?: mongoose.Types.ObjectId;
+  type: string;
+  faceValue: number;
+  price?: number;
+  amountToReceive?: number;
+  cardForm: "electronic" | "physical";
   cardDetails?: {
-    pin?: string
-    serial?: string
-  }
+    pin?: string;
+    serial?: string;
+  };
   photos?: {
-    front?: string
-    back?: string
-  }
-  receiptPhoto?: string
-  status: string
-  paymentMethod?: string
+    front?: string;
+    back?: string;
+  };
+  receiptPhoto?: string;
+  status: string;
+  paymentMethod?: string;
   paymentDetails?: {
-    momoNumber?: string
-    momoProvider?: string
-    bankName?: string
-    accountNumber?: string
-    accountName?: string
-  }
-  txRef: string
-  reviewedBy?: mongoose.Types.ObjectId
-  reviewedAt?: Date
-  rejectionReason?: string
-  completedAt?: Date
-  metadata?: Record<string, any>
-  createdAt: Date
-  updatedAt: Date
+    momoNumber?: string;
+    momoProvider?: string;
+    bankName?: string;
+    accountNumber?: string;
+    accountName?: string;
+  };
+  txRef: string;
+  reviewedBy?: mongoose.Types.ObjectId;
+  reviewedAt?: Date;
+  rejectionReason?: string;
+  completedAt?: Date;
+  metadata?: Record<string, any>;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const GiftCardSchema = new Schema<IGiftCard>(
@@ -81,7 +81,14 @@ const GiftCardSchema = new Schema<IGiftCard>(
     receiptPhoto: String,
     status: {
       type: String,
-      enum: ["pending", "under_review", "approved", "completed", "rejected", "cancelled"],
+      enum: [
+        "pending",
+        "under_review",
+        "approved",
+        "completed",
+        "rejected",
+        "cancelled",
+      ],
       default: "pending",
       index: true,
     },
@@ -113,7 +120,7 @@ const GiftCardSchema = new Schema<IGiftCard>(
   },
   {
     timestamps: true,
-  },
-)
+  }
+);
 
-export const GiftCard = mongoose.model<IGiftCard>("GiftCard", GiftCardSchema)
+export const GiftCard = mongoose.model<IGiftCard>("GiftCard", GiftCardSchema);

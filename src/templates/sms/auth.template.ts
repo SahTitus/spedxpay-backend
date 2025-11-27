@@ -1,4 +1,4 @@
-import { appConfig } from "../../config/app.config";
+import { appConfig } from "../../config/app.config.js";
 
 export const getWelcomeSMS = (userName: string, verificationCode?: string) => {
   return `Welcome to ${appConfig.appName}, ${userName}! ${verificationCode ? `Your verification code is: ${verificationCode}` : "Please check your email to verify your account."}`;

@@ -1,53 +1,59 @@
-import crypto from "crypto"
-import { logger } from "../../utils/logger"
-import { KycRepository } from "../../repositories/kyc.repository"
-import { UserRepository } from "../../repositories/user.repository"
-import { generateToken, generateRefreshToken } from "../../utils/jwt"
-import { createError } from "../../middlewares/common/error.middleware"
-import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
-import { NotificationService } from "../../services/shared/notification.service"
+import crypto from "crypto";
+import { logger } from "../../utils/logger.js";
+import { KycRepository } from "../../repositories/kyc.repository.js";
+import { UserRepository } from "../../repositories/user.repository.js";
+import { generateToken, generateRefreshToken } from "../../utils/jwt.js";
+import { createError } from "../../middlewares/common/error.middleware.js";
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes.js";
+import { NotificationService } from "../../services/shared/notification.service.js";
 
 export interface RegisterUserDto {
-  name: string
-  email: string
-  password: string
-  phone: string
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
 }
 
 export interface LoginDto {
-  email: string
-  password: string
+  email: string;
+  password: string;
 }
 
 export class AuthService {
-  private userRepo: UserRepository
-  private kycRepo: KycRepository
-  private notificationService: NotificationService
+  private userRepo: UserRepository;
+  private kycRepo: KycRepository;
+  private notificationService: NotificationService;
 
   constructor() {
-    this.userRepo = new UserRepository()
-    this.kycRepo = new KycRepository()
-    this.notificationService = new NotificationService()
+    this.userRepo = new UserRepository();
+    this.kycRepo = new KycRepository();
+    this.notificationService = new NotificationService();
   }
 
   async register(data: RegisterUserDto) {
     try {
       // Check if user already exists
-      const existingUser = await this.userRepo.findByEmail(data.email)
+      const existingUser = await this.userRepo.findByEmail(data.email);
       if (existingUser) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.USER_ALREADY_EXISTS], 409, ERROR_CODES.USER_ALREADY_EXISTS)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.USER_ALREADY_EXISTS],
+          409,
+          ERROR_CODES.USER_ALREADY_EXISTS
+        );
       }
 
       // Generate email verification token
-      const emailVerificationToken = crypto.randomBytes(32).toString("hex")
-      const emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+      const emailVerificationToken = crypto.randomBytes(32).toString("hex");
+      const emailVerificationExpires = new Date(
+        Date.now() + 24 * 60 * 60 * 1000
+      ); // 24 hours
 
       // Create user
       const user = await this.userRepo.create({
         ...data,
         emailVerificationToken,
         emailVerificationExpires,
-      } as any)
+      } as any);
 
       const userId = String(user._id);
 
@@ -66,9 +72,9 @@ export class AuthService {
         metadata: {
           verificationToken: emailVerificationToken,
         },
-      })
+      });
 
-      logger.info(`User registered: ${user.email}`)
+      logger.info(`User registered: ${user.email}`);
 
       return {
         user: {
@@ -79,54 +85,63 @@ export class AuthService {
           role: user.role,
           emailVerified: user.emailVerified,
         },
-        message: "Registration successful. Please check your email to verify your account.",
-      }
+        message:
+          "Registration successful. Please check your email to verify your account.",
+      };
     } catch (error) {
-      logger.error("Registration error:", error)
-      throw error
+      logger.error("Registration error:", error);
+      throw error;
     }
   }
 
   async login(data: LoginDto) {
     try {
       // Find user by email
-      const user = await this.userRepo.findByEmail(data.email)
+      const user = await this.userRepo.findByEmail(data.email);
       if (!user) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.INVALID_CREDENTIALS], 401, ERROR_CODES.INVALID_CREDENTIALS)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.INVALID_CREDENTIALS],
+          401,
+          ERROR_CODES.INVALID_CREDENTIALS
+        );
       }
 
       // Check if user is active
       if (!user.isActive) {
-        throw createError("Account is deactivated", 403, ERROR_CODES.FORBIDDEN)
+        throw createError("Account is deactivated", 403, ERROR_CODES.FORBIDDEN);
       }
 
       // Verify password
-      const isPasswordValid = await user.comparePassword(data.password)
+      const isPasswordValid = await user.comparePassword(data.password);
       if (!isPasswordValid) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.INVALID_CREDENTIALS], 401, ERROR_CODES.INVALID_CREDENTIALS)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.INVALID_CREDENTIALS],
+          401,
+          ERROR_CODES.INVALID_CREDENTIALS
+        );
       }
 
       const userId = String(user._id);
 
       // Update last login
-      await this.userRepo.update( userId, { lastLogin: new Date() } as any );
+      await this.userRepo.update(userId, { lastLogin: new Date() } as any);
 
-      const currentKyc = await this.kycRepo.getCurrentKyc(userId)
+      const currentKyc = await this.kycRepo.getCurrentKyc(userId);
 
       // Generate tokens
       const token = generateToken({
         userId,
         role: user.role,
         email: user.email,
-      })
+      });
 
       const refreshToken = generateRefreshToken({
         userId,
         role: user.role,
         email: user.email,
-      })
+      });
 
-      logger.info(`User logged in: ${user.email}`)
+      logger.info(`User logged in: ${user.email}`);
 
       return {
         user: {
@@ -141,18 +156,22 @@ export class AuthService {
         },
         token,
         refreshToken,
-      }
+      };
     } catch (error) {
-      logger.error("Login error:", error)
-      throw error
+      logger.error("Login error:", error);
+      throw error;
     }
   }
 
   async verifyEmail(token: string) {
     try {
-      const user = await this.userRepo.findByEmailVerificationToken(token)
+      const user = await this.userRepo.findByEmailVerificationToken(token);
       if (!user) {
-        throw createError("Invalid or expired verification token", 400, ERROR_CODES.INVALID_TOKEN)
+        throw createError(
+          "Invalid or expired verification token",
+          400,
+          ERROR_CODES.INVALID_TOKEN
+        );
       }
 
       // Update user
@@ -160,39 +179,40 @@ export class AuthService {
         emailVerified: true,
         emailVerificationToken: undefined,
         emailVerificationExpires: undefined,
-      } as any)
+      } as any);
 
-      logger.info(`Email verified: ${user.email}`)
+      logger.info(`Email verified: ${user.email}`);
 
       return {
         message: "Email verified successfully",
-      }
+      };
     } catch (error) {
-      logger.error("Email verification error:", error)
-      throw error
+      logger.error("Email verification error:", error);
+      throw error;
     }
   }
 
   async requestPasswordReset(email: string) {
     try {
-      const user = await this.userRepo.findByEmail(email)
+      const user = await this.userRepo.findByEmail(email);
       if (!user) {
         // Don't reveal if user exists
         return {
-          message: "If an account exists with this email, a password reset link has been sent.",
-        }
+          message:
+            "If an account exists with this email, a password reset link has been sent.",
+        };
       }
 
       // Generate reset token
-      const resetToken = crypto.randomBytes(32).toString("hex")
-      const resetExpires = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
+      const resetToken = crypto.randomBytes(32).toString("hex");
+      const resetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
       const userId = String(user._id);
 
       await this.userRepo.update(userId, {
         resetPasswordToken: resetToken,
         resetPasswordExpires: resetExpires,
-      } as any)
+      } as any);
 
       await this.notificationService.send({
         userId,
@@ -209,38 +229,43 @@ export class AuthService {
         metadata: {
           resetToken,
         },
-      })
+      });
 
-      logger.info(`Password reset requested: ${user.email}`)
+      logger.info(`Password reset requested: ${user.email}`);
 
       return {
-        message: "If an account exists with this email, a password reset link has been sent.",
-      }
+        message:
+          "If an account exists with this email, a password reset link has been sent.",
+      };
     } catch (error) {
-      logger.error("Password reset request error:", error)
-      throw error
+      logger.error("Password reset request error:", error);
+      throw error;
     }
   }
 
   async resetPassword(token: string, newPassword: string) {
     try {
-      const user = await this.userRepo.findByResetPasswordToken(token)
+      const user = await this.userRepo.findByResetPasswordToken(token);
       if (!user) {
-        throw createError("Invalid or expired reset token", 400, ERROR_CODES.INVALID_TOKEN)
+        throw createError(
+          "Invalid or expired reset token",
+          400,
+          ERROR_CODES.INVALID_TOKEN
+        );
       }
 
-      const userId = String(user._id);;
+      const userId = String(user._id);
 
       // Update password
-      user.password = newPassword
-      user.resetPasswordToken = undefined
-      user.resetPasswordExpires = undefined
-      await user.save()
+      user.password = newPassword;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
+      await user.save();
 
       const timestamp = new Date().toLocaleString("en-US", {
         dateStyle: "full",
         timeStyle: "long",
-      })
+      });
 
       await this.notificationService.send({
         userId,
@@ -258,42 +283,54 @@ export class AuthService {
         metadata: {
           changedAt: new Date().toISOString(),
         },
-      })
+      });
 
-      logger.info(`Password reset: ${user.email}`)
+      logger.info(`Password reset: ${user.email}`);
 
       return {
         message: "Password reset successfully",
-      }
+      };
     } catch (error) {
-      logger.error("Password reset error:", error)
-      throw error
+      logger.error("Password reset error:", error);
+      throw error;
     }
   }
 
-    async changePassword(userId: string, currentPassword: string, newPassword: string) {
-      try {
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string
+  ) {
+    try {
       // Find user with password field
-        const user = await this.userRepo.findById( userId, "+password" )
-        
+      const user = await this.userRepo.findById(userId, "+password");
+
       if (!user) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND], 404, ERROR_CODES.USER_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND],
+          404,
+          ERROR_CODES.USER_NOT_FOUND
+        );
       }
 
       // Verify current password
-      const isPasswordValid = await user.comparePassword(currentPassword)
+      const isPasswordValid = await user.comparePassword(currentPassword);
       if (!isPasswordValid) {
-        throw createError("Current password is incorrect", 401, ERROR_CODES.INVALID_CREDENTIALS)
+        throw createError(
+          "Current password is incorrect",
+          401,
+          ERROR_CODES.INVALID_CREDENTIALS
+        );
       }
 
       // Update password
-      user.password = newPassword
-      await user.save()
+      user.password = newPassword;
+      await user.save();
 
       const timestamp = new Date().toLocaleString("en-US", {
         dateStyle: "full",
         timeStyle: "long",
-      })
+      });
 
       await this.notificationService.send({
         userId,
@@ -311,16 +348,16 @@ export class AuthService {
         metadata: {
           changedAt: new Date().toISOString(),
         },
-      })
+      });
 
-      logger.info(`Password changed: ${user.email}`)
+      logger.info(`Password changed: ${user.email}`);
 
       return {
         message: "Password changed successfully",
-      }
+      };
     } catch (error) {
-      logger.error("Change password error:", error)
-      throw error
+      logger.error("Change password error:", error);
+      throw error;
     }
   }
 }

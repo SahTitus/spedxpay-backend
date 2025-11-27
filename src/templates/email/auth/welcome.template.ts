@@ -1,4 +1,4 @@
-import { getEmailLayout, type EmailTemplateData } from "../base.template";
+import { getEmailLayout, type EmailTemplateData } from "../base.template.js";
 
 export interface WelcomeEmailData extends EmailTemplateData {
   verificationLink: string;

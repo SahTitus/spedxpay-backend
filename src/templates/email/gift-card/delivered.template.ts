@@ -1,16 +1,16 @@
-import { getEmailLayout } from "../base.template"
+import { getEmailLayout } from "../base.template.js";
 
 export interface GiftCardDeliveredEmailData {
-  userName: string
-  giftCardType: string
-  faceValue: number
+  userName: string;
+  giftCardType: string;
+  faceValue: number;
   cardDetails: {
-    pin?: string
-    serial?: string
-    code?: string
-    redemptionUrl?: string
-  }
-  txRef: string
+    pin?: string;
+    serial?: string;
+    code?: string;
+    redemptionUrl?: string;
+  };
+  txRef: string;
 }
 
 export const getGiftCardDeliveredEmail = (data: GiftCardDeliveredEmailData) => {
@@ -51,10 +51,10 @@ export const getGiftCardDeliveredEmail = (data: GiftCardDeliveredEmailData) => {
     <div class="message">
       If you have any issues redeeming your card, please contact our support team.
     </div>
-  `
+  `;
 
   return {
     subject: `Your ${data.giftCardType.toUpperCase()} Gift Card - ${data.txRef}`,
     html: getEmailLayout(content, "Gift Card Delivered"),
-  }
-}
+  };
+};

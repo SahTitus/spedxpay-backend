@@ -1,25 +1,33 @@
-import { BaseRepository } from "./base/base.repository"
-import { Notification, type INotification } from "../models/Notification.model"
+import { BaseRepository } from "./base/base.repository";
+import {
+  Notification,
+  type INotification,
+} from "../models/Notification.model.js";
 
 export class NotificationRepository extends BaseRepository<INotification> {
   constructor() {
-    super(Notification)
+    super(Notification);
   }
 
-  async findByUserId(userId: string, unreadOnly = false): Promise<INotification[]> {
-    const filter: any = { userId }
+  async findByUserId(
+    userId: string,
+    unreadOnly = false
+  ): Promise<INotification[]> {
+    const filter: any = { userId };
     if (unreadOnly) {
-      filter.read = false
+      filter.read = false;
     }
-    return this.model.find(filter).sort({ createdAt: -1 }).exec()
+    return this.model.find(filter).sort({ createdAt: -1 }).exec();
   }
 
   async markAsRead(notificationId: string): Promise<INotification | null> {
-    return this.model.findByIdAndUpdate(notificationId, { read: true }, { new: true }).exec()
+    return this.model
+      .findByIdAndUpdate(notificationId, { read: true }, { new: true })
+      .exec();
   }
 
   async markAllAsRead(userId: string): Promise<void> {
-    await this.model.updateMany({ userId, read: false }, { read: true }).exec()
+    await this.model.updateMany({ userId, read: false }, { read: true }).exec();
   }
 
   async deleteExpired(): Promise<number> {
@@ -27,7 +35,7 @@ export class NotificationRepository extends BaseRepository<INotification> {
       .deleteMany({
         expiresAt: { $lt: new Date() },
       })
-      .exec()
-    return result.deletedCount || 0
+      .exec();
+    return result.deletedCount || 0;
   }
 }

@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { KycController } from "../controllers/kyc/kyc.controller";
-import { validation } from "../middlewares/common/validation.middleware";
-import { authMiddleware } from "../middlewares/auth/auth.middleware";
+import { KycController } from "../controllers/kyc/kyc.controller.js";
+import { validation } from "../middlewares/common/validation.middleware.js";
+import { authMiddleware } from "../middlewares/auth/auth.middleware.js";
 import {
   submitKycSchema,
   submissionIdSchema,
-} from "../validators/kyc.validator";
+} from "../validators/kyc.validator.js";
 
 const router = Router();
 const kycController = new KycController();

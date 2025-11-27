@@ -1,35 +1,35 @@
-import mongoose, { Schema, type Document } from "mongoose"
-import bcrypt from "bcryptjs"
-import { USER_ROLE } from "../constants/statuses"
+import mongoose, { Schema, type Document } from "mongoose";
+import bcrypt from "bcryptjs";
+import { USER_ROLE } from "../constants/statuses.js";
 
 export interface IUser extends Document {
-  name: string
-  email: string
-  password: string
-  phone: string
-  role: string
-  emailVerified: boolean
-  emailVerificationToken?: string
-  emailVerificationExpires?: Date
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  role: string;
+  emailVerified: boolean;
+  emailVerificationToken?: string;
+  emailVerificationExpires?: Date;
   paymentMethods: Array<{
-    type: string
+    type: string;
     details: {
-      momoNumber?: string
-      momoProvider?: string
-      bankName?: string
-      accountNumber?: string
-      accountName?: string
-    }
-    verified: boolean
-    isPrimary: boolean
-  }>
-  resetPasswordToken?: string
-  resetPasswordExpires?: Date
-  lastLogin?: Date
-  isActive: boolean
-  createdAt: Date
-  updatedAt: Date
-  comparePassword(candidatePassword: string): Promise<boolean>
+      momoNumber?: string;
+      momoProvider?: string;
+      bankName?: string;
+      accountNumber?: string;
+      accountName?: string;
+    };
+    verified: boolean;
+    isPrimary: boolean;
+  }>;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
+  lastLogin?: Date;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -114,27 +114,29 @@ const UserSchema = new Schema<IUser>(
   },
   {
     timestamps: true,
-  },
-)
+  }
+);
 
 // Hash password before saving
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
-    return next()
+    return next();
   }
 
   try {
-    const salt = await bcrypt.genSalt(10)
-    this.password = await bcrypt.hash(this.password, salt)
-    next()
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
   } catch (error: any) {
-    next(error)
+    next(error);
   }
-})
+});
 
 // Compare password method
-UserSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
-  return bcrypt.compare(candidatePassword, this.password)
-}
+UserSchema.methods.comparePassword = async function (
+  candidatePassword: string
+): Promise<boolean> {
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
-export const User = mongoose.model<IUser>("User", UserSchema)
+export const User = mongoose.model<IUser>("User", UserSchema);

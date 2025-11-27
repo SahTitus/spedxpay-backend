@@ -1,30 +1,30 @@
-import { BaseRepository } from "./base/base.repository"
-import { GiftCard, type IGiftCard } from "../models/GiftCard.model"
-import { User } from "../models/User.model"
+import { BaseRepository } from "./base/base.repository";
+import { GiftCard, type IGiftCard } from "../models/GiftCard.model.js";
+import { User } from "../models/User.model.js";
 
 export class GiftCardRepository extends BaseRepository<IGiftCard> {
   constructor() {
-    super(GiftCard)
+    super(GiftCard);
   }
 
   async findBySellerId(sellerId: string, status?: string) {
-    const filter: any = { sellerId }
+    const filter: any = { sellerId };
     if (status) {
-      filter.status = status
+      filter.status = status;
     }
-    return this.model.find(filter).sort({ createdAt: -1 }).exec()
+    return this.model.find(filter).sort({ createdAt: -1 }).exec();
   }
 
   async findByBuyerId(buyerId: string, status?: string) {
-    const filter: any = { buyerId }
+    const filter: any = { buyerId };
     if (status) {
-      filter.status = status
+      filter.status = status;
     }
-    return this.model.find(filter).sort({ createdAt: -1 }).exec()
+    return this.model.find(filter).sort({ createdAt: -1 }).exec();
   }
 
   async findByTxRef(txRef: string) {
-    return this.model.findOne({ txRef }).exec()
+    return this.model.findOne({ txRef }).exec();
   }
 
   async findAvailableForPurchase() {
@@ -34,7 +34,7 @@ export class GiftCardRepository extends BaseRepository<IGiftCard> {
         buyerId: { $exists: false },
       })
       .sort({ createdAt: -1 })
-      .exec()
+      .exec();
   }
 
   async findPendingSellOrders() {
@@ -45,7 +45,7 @@ export class GiftCardRepository extends BaseRepository<IGiftCard> {
       })
       .populate("sellerId", "name email")
       .sort({ createdAt: -1 })
-      .exec()
+      .exec();
   }
 
   async findPendingBuyOrders() {
@@ -56,7 +56,7 @@ export class GiftCardRepository extends BaseRepository<IGiftCard> {
       })
       .populate("buyerId", "name email")
       .sort({ createdAt: -1 })
-      .exec()
+      .exec();
   }
 
   async findPendingReview() {
@@ -68,7 +68,7 @@ export class GiftCardRepository extends BaseRepository<IGiftCard> {
       .populate("buyerId", "name email phone")
       .populate("reviewedBy", "name email")
       .sort({ createdAt: -1 })
-      .exec()
+      .exec();
   }
 
   async updateStatus(giftCardId: string, status: string, additionalData?: any) {
@@ -79,43 +79,52 @@ export class GiftCardRepository extends BaseRepository<IGiftCard> {
           status,
           ...additionalData,
         },
-        { new: true },
+        { new: true }
       )
-      .exec()
+      .exec();
   }
 
-  async findAllWithFilters(skip = 0, limit = 20, filters: any = {}, search?: string) {
-    const query: any = {}
+  async findAllWithFilters(
+    skip = 0,
+    limit = 20,
+    filters: any = {},
+    search?: string
+  ) {
+    const query: any = {};
 
     // Apply status filter
     if (filters.status) {
-      query.status = filters.status
+      query.status = filters.status;
     }
 
     // Apply type filter (sell or buy)
     if (filters.orderType === "sell") {
-      query.sellerId = { $exists: true }
+      query.sellerId = { $exists: true };
     } else if (filters.orderType === "buy") {
-      query.buyerId = { $exists: true }
+      query.buyerId = { $exists: true };
     }
 
     // Apply gift card type filter
     if (filters.type) {
-      query.type = filters.type
+      query.type = filters.type;
     }
 
     // Apply comprehensive search
     if (search) {
-      const searchRegex = { $regex: search, $options: "i" }
+      const searchRegex = { $regex: search, $options: "i" };
 
       // First, search for matching users (both sellers and buyers)
       const matchingUsers = await User.find({
-        $or: [{ name: searchRegex }, { email: searchRegex }, { phone: searchRegex }],
+        $or: [
+          { name: searchRegex },
+          { email: searchRegex },
+          { phone: searchRegex },
+        ],
       })
         .select("_id")
-        .lean()
+        .lean();
 
-      const userIds = matchingUsers.map((u) => u._id)
+      const userIds = matchingUsers.map((u) => u._id);
 
       // Build search query including user IDs and gift card fields
       query.$or = [
@@ -129,7 +138,7 @@ export class GiftCardRepository extends BaseRepository<IGiftCard> {
         { "paymentDetails.accountNumber": searchRegex },
         { "paymentDetails.accountName": searchRegex },
         { "paymentDetails.bankName": searchRegex },
-      ]
+      ];
     }
 
     return this.model
@@ -140,37 +149,41 @@ export class GiftCardRepository extends BaseRepository<IGiftCard> {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .exec()
+      .exec();
   }
 
   async countWithFilters(filters: any = {}, search?: string) {
-    const query: any = {}
+    const query: any = {};
 
     if (filters.status) {
-      query.status = filters.status
+      query.status = filters.status;
     }
 
     if (filters.orderType === "sell") {
-      query.sellerId = { $exists: true }
+      query.sellerId = { $exists: true };
     } else if (filters.orderType === "buy") {
-      query.buyerId = { $exists: true }
+      query.buyerId = { $exists: true };
     }
 
     if (filters.type) {
-      query.type = filters.type
+      query.type = filters.type;
     }
 
     if (search) {
-      const searchRegex = { $regex: search, $options: "i" }
+      const searchRegex = { $regex: search, $options: "i" };
 
       // Search for matching users
       const matchingUsers = await User.find({
-        $or: [{ name: searchRegex }, { email: searchRegex }, { phone: searchRegex }],
+        $or: [
+          { name: searchRegex },
+          { email: searchRegex },
+          { phone: searchRegex },
+        ],
       })
         .select("_id")
-        .lean()
+        .lean();
 
-      const userIds = matchingUsers.map((u) => u._id)
+      const userIds = matchingUsers.map((u) => u._id);
 
       query.$or = [
         { sellerId: { $in: userIds } },
@@ -183,9 +196,9 @@ export class GiftCardRepository extends BaseRepository<IGiftCard> {
         { "paymentDetails.accountNumber": searchRegex },
         { "paymentDetails.accountName": searchRegex },
         { "paymentDetails.bankName": searchRegex },
-      ]
+      ];
     }
 
-    return this.model.countDocuments(query).exec()
+    return this.model.countDocuments(query).exec();
   }
 }

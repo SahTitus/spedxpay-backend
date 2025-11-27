@@ -1,98 +1,110 @@
-import { TransactionRepository } from "../../repositories/transaction.repository"
-import { UserRepository } from "../../repositories/user.repository"
-import { PlatformConfigRepository } from "../../repositories/platform-config.repository"
-import { NotificationService } from "../../services/shared/notification.service"
-import { createError } from "../../middlewares/common/error.middleware"
-import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
-import { TRANSACTION_STATUS, TRANSACTION_TYPE, KYC_STATUS } from "../../constants/statuses"
-import { logger } from "../../utils/logger"
-import { v4 as uuidv4 } from "uuid"
-import { KycRepository } from "../../repositories/kyc.repository";
+import { TransactionRepository } from "../../repositories/transaction.repository.js";
+import { UserRepository } from "../../repositories/user.repository.js";
+import { PlatformConfigRepository } from "../../repositories/platform-config.repository.js";
+import { NotificationService } from "../../services/shared/notification.service.js";
+import { createError } from "../../middlewares/common/error.middleware.js";
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes.js";
+import {
+  TRANSACTION_STATUS,
+  TRANSACTION_TYPE,
+  KYC_STATUS,
+} from "../../constants/statuses.js";
+import { logger } from "../../utils/logger.js";
+import { v4 as uuidv4 } from "uuid";
+import { KycRepository } from "../../repositories/kyc.repository.js";
 
 export interface SellCryptoDto {
-  cryptocurrency: string
-  amountCrypto?: number
-  amountFiat?: number
-  paymentMethod: string
-  paymentMethodIndex: number
-  termsAccepted: boolean
+  cryptocurrency: string;
+  amountCrypto?: number;
+  amountFiat?: number;
+  paymentMethod: string;
+  paymentMethodIndex: number;
+  termsAccepted: boolean;
 }
 
 export interface BuyCryptoDto {
-  cryptocurrency: string
-  amountFiat: number
-  walletAddress: string
-  paymentMethod: string
-  paymentMethodIndex?: number
-  termsAccepted: boolean
+  cryptocurrency: string;
+  amountFiat: number;
+  walletAddress: string;
+  paymentMethod: string;
+  paymentMethodIndex?: number;
+  termsAccepted: boolean;
 }
 
 export class CryptoTradingService {
-  private transactionRepo: TransactionRepository
-  private userRepo: UserRepository
-  private platformConfigRepo: PlatformConfigRepository
-  private kycRepo: KycRepository // Added KYC repository
-  private notificationService: NotificationService
+  private transactionRepo: TransactionRepository;
+  private userRepo: UserRepository;
+  private platformConfigRepo: PlatformConfigRepository;
+  private kycRepo: KycRepository; // Added KYC repository
+  private notificationService: NotificationService;
 
   constructor() {
-    this.transactionRepo = new TransactionRepository()
-    this.userRepo = new UserRepository()
-    this.platformConfigRepo = new PlatformConfigRepository()
-    this.kycRepo = new KycRepository() // Initialize KYC repository
-    this.notificationService = new NotificationService()
+    this.transactionRepo = new TransactionRepository();
+    this.userRepo = new UserRepository();
+    this.platformConfigRepo = new PlatformConfigRepository();
+    this.kycRepo = new KycRepository(); // Initialize KYC repository
+    this.notificationService = new NotificationService();
   }
 
   async sellCrypto(userId: string, data: SellCryptoDto) {
     try {
       // Verify user and KYC
-      const user = await this.userRepo.findById(userId)
+      const user = await this.userRepo.findById(userId);
       if (!user) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND], 404, ERROR_CODES.USER_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND],
+          404,
+          ERROR_CODES.USER_NOT_FOUND
+        );
       }
 
-      const kyc = await this.kycRepo.findLatestByUserId(userId)
+      const kyc = await this.kycRepo.findLatestByUserId(userId);
       if (!kyc || kyc.status !== KYC_STATUS.APPROVED) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.KYC_NOT_APPROVED], 403, ERROR_CODES.KYC_NOT_APPROVED)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.KYC_NOT_APPROVED],
+          403,
+          ERROR_CODES.KYC_NOT_APPROVED
+        );
       }
 
       // Verify payment method exists and is verified
-      const paymentMethod = user.paymentMethods[data.paymentMethodIndex]
+      const paymentMethod = user.paymentMethods[data.paymentMethodIndex];
       if (!paymentMethod) {
         throw createError(
           ERROR_MESSAGES[ERROR_CODES.PAYMENT_METHOD_NOT_FOUND],
           404,
-          ERROR_CODES.PAYMENT_METHOD_NOT_FOUND,
-        )
+          ERROR_CODES.PAYMENT_METHOD_NOT_FOUND
+        );
       }
 
       if (!paymentMethod.verified) {
         throw createError(
           ERROR_MESSAGES[ERROR_CODES.PAYMENT_METHOD_NOT_VERIFIED],
           400,
-          ERROR_CODES.PAYMENT_METHOD_NOT_VERIFIED,
-        )
+          ERROR_CODES.PAYMENT_METHOD_NOT_VERIFIED
+        );
       }
 
       // Get current rate (will be implemented in rates service)
-      const rateUsed = 50000 // Placeholder - will fetch from rates service
+      const rateUsed = 50000; // Placeholder - will fetch from rates service
 
       // Calculate amounts
-      let amountCrypto = data.amountCrypto
-      let amountFiat = data.amountFiat
+      let amountCrypto = data.amountCrypto;
+      let amountFiat = data.amountFiat;
 
       if (amountCrypto && !amountFiat) {
-        amountFiat = amountCrypto * rateUsed
+        amountFiat = amountCrypto * rateUsed;
       } else if (amountFiat && !amountCrypto) {
-        amountCrypto = amountFiat / rateUsed
+        amountCrypto = amountFiat / rateUsed;
       }
 
       // Get platform wallet address
-      const wallets = await this.platformConfigRepo.getWalletAddresses()
-      const platformWalletAddress = (wallets as any)[data.cryptocurrency] || ""
+      const wallets = await this.platformConfigRepo.getWalletAddresses();
+      const platformWalletAddress = (wallets as any)[data.cryptocurrency] || "";
 
       // Create transaction
-      const txRef = `SELL-${uuidv4()}`
-      const expiresAt = new Date(Date.now() + 30 * 60 * 1000) // 30 minutes
+      const txRef = `SELL-${uuidv4()}`;
+      const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
 
       const transaction = await this.transactionRepo.create({
         userId,
@@ -109,9 +121,9 @@ export class CryptoTradingService {
         txRef,
         termsAccepted: data.termsAccepted,
         expiresAt,
-      } as any)
+      } as any);
 
-      logger.info(`Sell crypto transaction created: ${txRef}`)
+      logger.info(`Sell crypto transaction created: ${txRef}`);
 
       return {
         transaction: {
@@ -127,39 +139,48 @@ export class CryptoTradingService {
           expiresAt: transaction.expiresAt,
           createdAt: transaction.createdAt,
         },
-        message: "Transaction created. Please send crypto to the platform wallet address.",
-      }
+        message:
+          "Transaction created. Please send crypto to the platform wallet address.",
+      };
     } catch (error) {
-      logger.error("Sell crypto error:", error)
-      throw error
+      logger.error("Sell crypto error:", error);
+      throw error;
     }
   }
 
   async buyCrypto(userId: string, data: BuyCryptoDto) {
     try {
       // Verify user and KYC
-      const user = await this.userRepo.findById(userId)
+      const user = await this.userRepo.findById(userId);
       if (!user) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND], 404, ERROR_CODES.USER_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND],
+          404,
+          ERROR_CODES.USER_NOT_FOUND
+        );
       }
 
-      const kyc = await this.kycRepo.findLatestByUserId(userId)
+      const kyc = await this.kycRepo.findLatestByUserId(userId);
       if (!kyc || kyc.status !== KYC_STATUS.APPROVED) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.KYC_NOT_APPROVED], 403, ERROR_CODES.KYC_NOT_APPROVED)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.KYC_NOT_APPROVED],
+          403,
+          ERROR_CODES.KYC_NOT_APPROVED
+        );
       }
 
       // TODO: UPDATE THIS
       // Get current rate (will be implemented in rates service)
-      const rateUsed = 52000 // Placeholder - will fetch from rates service
+      const rateUsed = 52000; // Placeholder - will fetch from rates service
 
       // Calculate crypto amount
-      const amountCrypto = data.amountFiat / rateUsed
+      const amountCrypto = data.amountFiat / rateUsed;
 
       // Get platform payment details
-      const paymentDetails = await this.platformConfigRepo.getPaymentDetails()
+      const paymentDetails = await this.platformConfigRepo.getPaymentDetails();
 
       // Create transaction
-      const txRef = `BUY-${uuidv4()}`
+      const txRef = `BUY-${uuidv4()}`;
 
       const transaction = await this.transactionRepo.create({
         userId,
@@ -177,9 +198,9 @@ export class CryptoTradingService {
         metadata: {
           platformPaymentDetails: paymentDetails,
         },
-      } as any)
+      } as any);
 
-      logger.info(`Buy crypto transaction created: ${txRef}`)
+      logger.info(`Buy crypto transaction created: ${txRef}`);
 
       return {
         transaction: {
@@ -197,46 +218,62 @@ export class CryptoTradingService {
         },
         platformPaymentDetails: paymentDetails,
         message: "Transaction created. Please make payment to proceed.",
-      }
+      };
     } catch (error) {
-      logger.error("Buy crypto error:", error)
-      throw error
+      logger.error("Buy crypto error:", error);
+      throw error;
     }
   }
 
   async iHaveSent(userId: string, transactionId: string, proofOfSend?: string) {
     try {
-      const transaction = await this.transactionRepo.findById(transactionId)
+      const transaction = await this.transactionRepo.findById(transactionId);
       if (!transaction) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND], 404, ERROR_CODES.TRANSACTION_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND],
+          404,
+          ERROR_CODES.TRANSACTION_NOT_FOUND
+        );
       }
 
       if (transaction.userId.toString() !== userId) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.FORBIDDEN], 403, ERROR_CODES.FORBIDDEN)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.FORBIDDEN],
+          403,
+          ERROR_CODES.FORBIDDEN
+        );
       }
 
       if (transaction.type !== TRANSACTION_TYPE.SELL_CRYPTO) {
-        throw createError("This action is only for sell crypto transactions", 400, ERROR_CODES.INVALID_INPUT)
+        throw createError(
+          "This action is only for sell crypto transactions",
+          400,
+          ERROR_CODES.INVALID_INPUT
+        );
       }
 
       if (transaction.status !== TRANSACTION_STATUS.PENDING) {
         throw createError(
           ERROR_MESSAGES[ERROR_CODES.TRANSACTION_ALREADY_COMPLETED],
           400,
-          ERROR_CODES.TRANSACTION_ALREADY_COMPLETED,
-        )
+          ERROR_CODES.TRANSACTION_ALREADY_COMPLETED
+        );
       }
 
-      const user = await this.userRepo.findById(userId)
+      const user = await this.userRepo.findById(userId);
 
       // Update transaction status
-      await this.transactionRepo.updateStatus(transactionId, TRANSACTION_STATUS.UNDER_REVIEW, {
-        proofOfSend,
-        metadata: {
-          ...transaction.metadata,
-          sentAt: new Date(),
-        },
-      })
+      await this.transactionRepo.updateStatus(
+        transactionId,
+        TRANSACTION_STATUS.UNDER_REVIEW,
+        {
+          proofOfSend,
+          metadata: {
+            ...transaction.metadata,
+            sentAt: new Date(),
+          },
+        }
+      );
 
       await this.notificationService.send({
         userId: userId,
@@ -262,28 +299,41 @@ export class CryptoTradingService {
           amount: transaction.amountCrypto,
           link: `/admin/transactions/${transaction._id}`,
         },
-      })
+      });
 
-      logger.info(`User marked crypto as sent: ${transaction.txRef}`)
+      logger.info(`User marked crypto as sent: ${transaction.txRef}`);
 
       return {
-        message: "Transaction marked as sent. Admin will verify and process your payment.",
-      }
+        message:
+          "Transaction marked as sent. Admin will verify and process your payment.",
+      };
     } catch (error) {
-      logger.error("I have sent error:", error)
-      throw error
+      logger.error("I have sent error:", error);
+      throw error;
     }
   }
 
-  async iHavePaid(userId: string, transactionId: string, proofOfPayment?: string) {
+  async iHavePaid(
+    userId: string,
+    transactionId: string,
+    proofOfPayment?: string
+  ) {
     try {
-      const transaction = await this.transactionRepo.findById(transactionId)
+      const transaction = await this.transactionRepo.findById(transactionId);
       if (!transaction) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND], 404, ERROR_CODES.TRANSACTION_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND],
+          404,
+          ERROR_CODES.TRANSACTION_NOT_FOUND
+        );
       }
 
       if (transaction.userId.toString() !== userId) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.FORBIDDEN], 403, ERROR_CODES.FORBIDDEN)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.FORBIDDEN],
+          403,
+          ERROR_CODES.FORBIDDEN
+        );
       }
 
       // if (transaction.type !== TRANSACTION_TYPE.BUY_CRYPTO) {
@@ -294,20 +344,24 @@ export class CryptoTradingService {
         throw createError(
           ERROR_MESSAGES[ERROR_CODES.TRANSACTION_ALREADY_COMPLETED],
           400,
-          ERROR_CODES.TRANSACTION_ALREADY_COMPLETED,
-        )
+          ERROR_CODES.TRANSACTION_ALREADY_COMPLETED
+        );
       }
 
-      const user = await this.userRepo.findById(userId)
+      const user = await this.userRepo.findById(userId);
 
       // Update transaction status
-      await this.transactionRepo.updateStatus(transactionId, TRANSACTION_STATUS.UNDER_REVIEW, {
-        proofOfPayment,
-        metadata: {
-          ...transaction.metadata,
-          paidAt: new Date(),
-        },
-      })
+      await this.transactionRepo.updateStatus(
+        transactionId,
+        TRANSACTION_STATUS.UNDER_REVIEW,
+        {
+          proofOfPayment,
+          metadata: {
+            ...transaction.metadata,
+            paidAt: new Date(),
+          },
+        }
+      );
 
       await this.notificationService.send({
         userId: userId,
@@ -333,41 +387,50 @@ export class CryptoTradingService {
           amount: transaction.amountFiat,
           link: `/admin/transactions/${transaction._id}`,
         },
-      })
+      });
 
-      logger.info(`User marked payment as sent: ${transaction.txRef}`)
+      logger.info(`User marked payment as sent: ${transaction.txRef}`);
 
       return {
-        message: "Payment confirmation received. Admin will verify and send crypto to your wallet.",
-      }
+        message:
+          "Payment confirmation received. Admin will verify and send crypto to your wallet.",
+      };
     } catch (error) {
-      logger.error("I have paid error:", error)
-      throw error
+      logger.error("I have paid error:", error);
+      throw error;
     }
   }
 
   async getTransaction(userId: string, transactionId: string) {
-    const transaction = await this.transactionRepo.findById(transactionId)
+    const transaction = await this.transactionRepo.findById(transactionId);
     if (!transaction) {
-      throw createError(ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND], 404, ERROR_CODES.TRANSACTION_NOT_FOUND)
+      throw createError(
+        ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND],
+        404,
+        ERROR_CODES.TRANSACTION_NOT_FOUND
+      );
     }
 
     if (transaction.userId.toString() !== userId) {
-      throw createError(ERROR_MESSAGES[ERROR_CODES.FORBIDDEN], 403, ERROR_CODES.FORBIDDEN)
+      throw createError(
+        ERROR_MESSAGES[ERROR_CODES.FORBIDDEN],
+        403,
+        ERROR_CODES.FORBIDDEN
+      );
     }
 
-    return transaction
+    return transaction;
   }
 
   async getUserTransactions(userId: string, status?: string) {
-    return this.transactionRepo.findByUserId(userId, status)
+    return this.transactionRepo.findByUserId(userId, status);
   }
 
   async getPlatformWallets() {
-    return this.platformConfigRepo.getWalletAddresses()
+    return this.platformConfigRepo.getWalletAddresses();
   }
 
   async getPlatformPaymentDetails() {
-    return this.platformConfigRepo.getPaymentDetails()
+    return this.platformConfigRepo.getPaymentDetails();
   }
 }

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import type { Secret, SignOptions } from "jsonwebtoken";
-import { appConfig } from "../config/app.config";
+import { appConfig } from "../config/app.config.js";
 
 export interface JWTPayload {
   userId: string;
@@ -15,11 +15,15 @@ export function generateToken(payload: JWTPayload): string {
     throw new Error("JWT secret is not configured");
   }
 
-  return jwt.sign(payload, secret as Secret, {
-    expiresIn: appConfig.security.jwtExpire,
-    issuer: "sped_x_pay-platform",
-    audience: "sped_x_pay-users",
-  } as SignOptions);
+  return jwt.sign(
+    payload,
+    secret as Secret,
+    {
+      expiresIn: appConfig.security.jwtExpire,
+      issuer: "sped_x_pay-platform",
+      audience: "sped_x_pay-users",
+    } as SignOptions
+  );
 }
 
 export function verifyToken(token: string): JWTPayload {

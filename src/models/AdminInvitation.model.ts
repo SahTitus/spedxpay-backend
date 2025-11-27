@@ -1,15 +1,15 @@
-import mongoose, { Schema, type Document } from "mongoose"
-import { USER_ROLE } from "../constants/statuses"
+import mongoose, { Schema, type Document } from "mongoose";
+import { USER_ROLE } from "../constants/statuses.js";
 
 export interface IAdminInvitation extends Document {
-  email: string
-  role: string
-  invitedBy: mongoose.Types.ObjectId
-  token: string
-  expiresAt: Date
-  status: "pending" | "accepted" | "expired"
-  createdAt: Date
-  updatedAt: Date
+  email: string;
+  role: string;
+  invitedBy: mongoose.Types.ObjectId;
+  token: string;
+  expiresAt: Date;
+  status: "pending" | "accepted" | "expired";
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const AdminInvitationSchema = new Schema<IAdminInvitation>(
@@ -47,7 +47,10 @@ const AdminInvitationSchema = new Schema<IAdminInvitation>(
   },
   {
     timestamps: true,
-  },
-)
+  }
+);
 
-export const AdminInvitation = mongoose.model<IAdminInvitation>("AdminInvitation", AdminInvitationSchema)
+export const AdminInvitation = mongoose.model<IAdminInvitation>(
+  "AdminInvitation",
+  AdminInvitationSchema
+);

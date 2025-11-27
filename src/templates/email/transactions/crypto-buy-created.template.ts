@@ -1,13 +1,13 @@
-import { getEmailLayout, type EmailTemplateData } from "../base.template"
+import { getEmailLayout, type EmailTemplateData } from "../base.template.js";
 
 export interface CryptoBuyCreatedEmailData extends EmailTemplateData {
-  txRef: string
-  cryptocurrency: string
-  amountCrypto: number
-  amountFiat: number
-  paymentMethod: string
-  platformPaymentDetails: any
-  transactionLink: string
+  txRef: string;
+  cryptocurrency: string;
+  amountCrypto: number;
+  amountFiat: number;
+  paymentMethod: string;
+  platformPaymentDetails: any;
+  transactionLink: string;
 }
 
 export const getCryptoBuyCreatedEmail = (data: CryptoBuyCreatedEmailData) => {
@@ -98,13 +98,13 @@ export const getCryptoBuyCreatedEmail = (data: CryptoBuyCreatedEmailData) => {
     <div class="alert">
       <strong>Important:</strong> Please ensure you make the exact payment amount and click "I Have Paid" to notify our team.
     </div>
-  `
+  `;
 
   return {
     subject: `Buy ${data.cryptocurrency} Transaction Created - ${data.txRef}`,
     html: getEmailLayout(
       content,
-      `Pay ${data.amountFiat.toLocaleString()} NGN to receive ${data.amountCrypto} ${data.cryptocurrency}`,
+      `Pay ${data.amountFiat.toLocaleString()} NGN to receive ${data.amountCrypto} ${data.cryptocurrency}`
     ),
-  }
-}
+  };
+};

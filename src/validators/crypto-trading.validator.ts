@@ -1,5 +1,5 @@
-import Joi from "joi"
-import { CRYPTO_CURRENCIES } from "../constants/currencies"
+import Joi from "joi";
+import { CRYPTO_CURRENCIES } from "../constants/currencies.js";
 
 export const sellCryptoSchema = Joi.object({
   cryptocurrency: Joi.string()
@@ -29,7 +29,7 @@ export const sellCryptoSchema = Joi.object({
     "any.only": "You must accept the terms and conditions",
     "any.required": "Terms acceptance is required",
   }),
-}).or("amountCrypto", "amountFiat")
+}).or("amountCrypto", "amountFiat");
 
 export const buyCryptoSchema = Joi.object({
   cryptocurrency: Joi.string()
@@ -46,10 +46,13 @@ export const buyCryptoSchema = Joi.object({
   walletAddress: Joi.string().required().messages({
     "any.required": "Wallet address is required",
   }),
-  paymentMethod: Joi.string().valid("momo", "bank", "paystack").required().messages({
-    "any.only": "Payment method must be 'momo', 'bank', or 'paystack'",
-    "any.required": "Payment method is required",
-  }),
+  paymentMethod: Joi.string()
+    .valid("momo", "bank", "paystack")
+    .required()
+    .messages({
+      "any.only": "Payment method must be 'momo', 'bank', or 'paystack'",
+      "any.required": "Payment method is required",
+    }),
   paymentMethodIndex: Joi.number().integer().min(0).optional().messages({
     "number.base": "Payment method index must be a number",
     "number.integer": "Payment method index must be an integer",
@@ -59,7 +62,7 @@ export const buyCryptoSchema = Joi.object({
     "any.only": "You must accept the terms and conditions",
     "any.required": "Terms acceptance is required",
   }),
-})
+});
 
 export const transactionActionSchema = Joi.object({
   proofOfPayment: Joi.string().uri().optional().messages({
@@ -68,10 +71,10 @@ export const transactionActionSchema = Joi.object({
   proofOfSend: Joi.string().uri().optional().messages({
     "string.uri": "Proof of send must be a valid URL",
   }),
-})
+});
 
 export const transactionIdParamSchema = Joi.object({
   transactionId: Joi.string().required().messages({
     "any.required": "Transaction ID is required",
   }),
-})
+});

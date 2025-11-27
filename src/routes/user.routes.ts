@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { UserController } from "../controllers/user/user.controller";
-import { validation } from "../middlewares/common/validation.middleware";
-import { authMiddleware } from "../middlewares/auth/auth.middleware";
+import { UserController } from "../controllers/user/user.controller.js";
+import { validation } from "../middlewares/common/validation.middleware.js";
+import { authMiddleware } from "../middlewares/auth/auth.middleware.js";
 import {
   updateProfileSchema,
   addPaymentMethodSchema,
   paymentMethodIndexSchema,
   removePaymentMethodSchema,
-} from "../validators/user.validator";
+} from "../validators/user.validator.js";
 
 const router = Router();
 const userController = new UserController();
@@ -44,7 +44,7 @@ router.post(
 router.delete(
   "/payment-methods/:paymentMethodId",
   validation.validate({ params: removePaymentMethodSchema }),
-  userController.removePaymentMethod,
-)
+  userController.removePaymentMethod
+);
 
 export default router;

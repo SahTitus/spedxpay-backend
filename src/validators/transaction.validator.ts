@@ -1,6 +1,6 @@
-import Joi from "joi"
-import { TRANSACTION_TYPE, TRANSACTION_STATUS } from "../constants/statuses"
-import { GIFT_CARD_TYPES } from "../constants/currencies"
+import Joi from "joi";
+import { TRANSACTION_TYPE, TRANSACTION_STATUS } from "../constants/statuses.js";
+import { GIFT_CARD_TYPES } from "../constants/currencies.js";
 
 export const getTransactionsQuerySchema = Joi.object({
   page: Joi.number().integer().min(1).default(1).messages({
@@ -14,9 +14,12 @@ export const getTransactionsQuerySchema = Joi.object({
     "number.min": "Limit must be at least 1",
     "number.max": "Limit cannot exceed 100",
   }),
-  type: Joi.string().valid("crypto", "giftcard", "googlevoice", "all").default("all").messages({
-    "any.only": "Type must be one of: crypto, giftcard, googlevoice, all",
-  }),
+  type: Joi.string()
+    .valid("crypto", "giftcard", "googlevoice", "all")
+    .default("all")
+    .messages({
+      "any.only": "Type must be one of: crypto, giftcard, googlevoice, all",
+    }),
   transactionType: Joi.string()
     .valid(...Object.values(TRANSACTION_TYPE))
     .optional()
@@ -39,15 +42,21 @@ export const getTransactionsQuerySchema = Joi.object({
     "string.base": "Search must be a string",
   }),
   sort: Joi.string()
-    .valid("createdAt:asc", "createdAt:desc", "amountFiat:asc", "amountFiat:desc")
+    .valid(
+      "createdAt:asc",
+      "createdAt:desc",
+      "amountFiat:asc",
+      "amountFiat:desc"
+    )
     .default("createdAt:desc")
     .messages({
-      "any.only": "Sort must be one of: createdAt:asc, createdAt:desc, amountFiat:asc, amountFiat:desc",
+      "any.only":
+        "Sort must be one of: createdAt:asc, createdAt:desc, amountFiat:asc, amountFiat:desc",
     }),
-})
+});
 
 export const transactionIdParamSchema = Joi.object({
   transactionId: Joi.string().required().messages({
     "any.required": "Transaction ID is required",
   }),
-})
+});

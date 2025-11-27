@@ -1,17 +1,17 @@
-import { getEmailLayout } from "../base.template"
+import { getEmailLayout } from "../base.template.js";
 
 export interface AdminInvitationEmailData {
-  invitedBy: string
-  role: string
-  invitationLink: string
-  expiresAt: string
+  invitedBy: string;
+  role: string;
+  invitationLink: string;
+  expiresAt: string;
 }
 
 export const getAdminInvitationEmail = (data: AdminInvitationEmailData) => {
   const roleNames: Record<string, string> = {
     admin: "Admin",
     assistant_admin: "Assistant Admin",
-  }
+  };
 
   const content = `
     <div class="greeting">You've Been Invited!</div>
@@ -50,10 +50,10 @@ export const getAdminInvitationEmail = (data: AdminInvitationEmailData) => {
     <div class="footer-note">
       This invitation link will expire on ${data.expiresAt}. If you didn't expect this invitation, you can safely ignore this email.
     </div>
-  `
+  `;
 
   return {
     subject: "You've Been Invited to Join as Admin",
     html: getEmailLayout(content, "Admin Invitation"),
-  }
-}
+  };
+};

@@ -1,44 +1,48 @@
-import { GoogleVoiceOrderRepository } from "../../repositories/google-voice-order.repository"
-import { UserRepository } from "../../repositories/user.repository"
-import { NotificationService } from "../../services/shared/notification.service"
-import { createError } from "../../middlewares/common/error.middleware"
-import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
-import { logger } from "../../utils/logger"
-import { v4 as uuidv4 } from "uuid"
+import { GoogleVoiceOrderRepository } from "../../repositories/google-voice-order.repository.js";
+import { UserRepository } from "../../repositories/user.repository.js";
+import { NotificationService } from "../../services/shared/notification.service.js";
+import { createError } from "../../middlewares/common/error.middleware.js";
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes.js";
+import { logger } from "../../utils/logger.js";
+import { v4 as uuidv4 } from "uuid";
 
 export interface CreateGoogleVoiceOrderDto {
-  quantity: number
-  paymentMethod: string
+  quantity: number;
+  paymentMethod: string;
 }
 
 export interface ReportIssueDto {
-  reason: string
+  reason: string;
 }
 
 export class GoogleVoiceService {
-  private googleVoiceOrderRepo: GoogleVoiceOrderRepository
-  private userRepo: UserRepository
-  private notificationService: NotificationService
+  private googleVoiceOrderRepo: GoogleVoiceOrderRepository;
+  private userRepo: UserRepository;
+  private notificationService: NotificationService;
 
   constructor() {
-    this.googleVoiceOrderRepo = new GoogleVoiceOrderRepository()
-    this.userRepo = new UserRepository()
-    this.notificationService = new NotificationService()
+    this.googleVoiceOrderRepo = new GoogleVoiceOrderRepository();
+    this.userRepo = new UserRepository();
+    this.notificationService = new NotificationService();
   }
 
   async createOrder(userId: string, data: CreateGoogleVoiceOrderDto) {
     try {
-      const user = await this.userRepo.findById(userId)
+      const user = await this.userRepo.findById(userId);
       if (!user) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND], 404, ERROR_CODES.USER_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.USER_NOT_FOUND],
+          404,
+          ERROR_CODES.USER_NOT_FOUND
+        );
       }
 
-      // Pricing 
-      const priceUsd = 10 * data.quantity
-      const priceGhs = priceUsd * 15 
+      // Pricing
+      const priceUsd = 10 * data.quantity;
+      const priceGhs = priceUsd * 15;
 
       // Create order
-      const txRef = `GV-${uuidv4()}`
+      const txRef = `GV-${uuidv4()}`;
 
       const order = await this.googleVoiceOrderRepo.create({
         buyerId: userId,
@@ -49,44 +53,54 @@ export class GoogleVoiceService {
         paymentMethod: data.paymentMethod,
         txRef,
         reportWindowMinutes: 5,
-      } as any)
+      } as any);
 
-      logger.info(`Google Voice order created: ${txRef} (${data.quantity} accounts)`)
+      logger.info(
+        `Google Voice order created: ${txRef} (${data.quantity} accounts)`
+      );
 
       return {
-          _id: order._id,
-          id: order._id,
-          txRef: order.txRef,
-          quantity: order.quantity,
-          priceUsd: order.priceUsd,
-          priceGhs: order.priceGhs,
-          status: order.status,
-          paymentMethod: order.paymentMethod,
-          createdAt: order.createdAt,
-      }
+        _id: order._id,
+        id: order._id,
+        txRef: order.txRef,
+        quantity: order.quantity,
+        priceUsd: order.priceUsd,
+        priceGhs: order.priceGhs,
+        status: order.status,
+        paymentMethod: order.paymentMethod,
+        createdAt: order.createdAt,
+      };
     } catch (error) {
-      logger.error("Create Google Voice order error:", error)
-      throw error
+      logger.error("Create Google Voice order error:", error);
+      throw error;
     }
   }
 
   async iHavePaid(userId: string, orderId: string, proofOfPayment?: string) {
     try {
-      const order = await this.googleVoiceOrderRepo.findById(orderId)
+      const order = await this.googleVoiceOrderRepo.findById(orderId);
       if (!order) {
         throw createError(
           ERROR_MESSAGES[ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND],
           404,
-          ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND,
-        )
+          ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND
+        );
       }
 
       if (order.buyerId.toString() !== userId) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.FORBIDDEN], 403, ERROR_CODES.FORBIDDEN)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.FORBIDDEN],
+          403,
+          ERROR_CODES.FORBIDDEN
+        );
       }
 
       if (order.status !== "pending") {
-        throw createError("Order is not in pending status", 400, ERROR_CODES.INVALID_INPUT)
+        throw createError(
+          "Order is not in pending status",
+          400,
+          ERROR_CODES.INVALID_INPUT
+        );
       }
 
       // Update status
@@ -96,7 +110,7 @@ export class GoogleVoiceService {
           proofOfPayment,
           paidAt: new Date(),
         },
-      })
+      });
 
       // Notify admin
       await this.notificationService.send({
@@ -110,48 +124,61 @@ export class GoogleVoiceService {
           txRef: order.txRef,
           link: `/admin/google-voice/${order._id}`,
         },
-      })
+      });
 
-      logger.info(`User marked Google Voice payment as sent: ${order.txRef}`)
+      logger.info(`User marked Google Voice payment as sent: ${order.txRef}`);
 
       return {
-        message: "Payment confirmation received. Admin will verify and deliver account details.",
-      }
+        message:
+          "Payment confirmation received. Admin will verify and deliver account details.",
+      };
     } catch (error) {
-      logger.error("I have paid for Google Voice error:", error)
-      throw error
+      logger.error("I have paid for Google Voice error:", error);
+      throw error;
     }
   }
 
   async reportIssue(userId: string, orderId: string, data: ReportIssueDto) {
     try {
-      const order = await this.googleVoiceOrderRepo.findById(orderId)
+      const order = await this.googleVoiceOrderRepo.findById(orderId);
       if (!order) {
         throw createError(
           ERROR_MESSAGES[ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND],
           404,
-          ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND,
-        )
+          ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND
+        );
       }
 
       if (order.buyerId.toString() !== userId) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.FORBIDDEN], 403, ERROR_CODES.FORBIDDEN)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.FORBIDDEN],
+          403,
+          ERROR_CODES.FORBIDDEN
+        );
       }
 
       if (order.status !== "delivered") {
-        throw createError("Can only report issues for delivered orders", 400, ERROR_CODES.INVALID_INPUT)
+        throw createError(
+          "Can only report issues for delivered orders",
+          400,
+          ERROR_CODES.INVALID_INPUT
+        );
       }
 
       // Check if within 5-minute window
       if (!order.expiresAt || new Date() > order.expiresAt) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.DISPUTE_WINDOW_EXPIRED], 400, ERROR_CODES.DISPUTE_WINDOW_EXPIRED)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.DISPUTE_WINDOW_EXPIRED],
+          400,
+          ERROR_CODES.DISPUTE_WINDOW_EXPIRED
+        );
       }
 
       // Update status to dispute
       await this.googleVoiceOrderRepo.updateStatus(orderId, "dispute", {
         disputeReason: data.reason,
         disputeReportedAt: new Date(),
-      })
+      });
 
       // Notify admin
       await this.notificationService.send({
@@ -166,60 +193,67 @@ export class GoogleVoiceService {
           reason: data.reason,
           link: `/admin/google-voice/${order._id}`,
         },
-      })
+      });
 
-      logger.info(`Dispute reported for Google Voice order: ${order.txRef}`)
+      logger.info(`Dispute reported for Google Voice order: ${order.txRef}`);
 
       return {
-        message: "Issue reported successfully. Admin will investigate and resolve.",
-      }
+        message:
+          "Issue reported successfully. Admin will investigate and resolve.",
+      };
     } catch (error) {
-      logger.error("Report Google Voice issue error:", error)
-      throw error
+      logger.error("Report Google Voice issue error:", error);
+      throw error;
     }
   }
 
   async getOrder(userId: string, orderId: string) {
-    const order = await this.googleVoiceOrderRepo.findById(orderId)
+    const order = await this.googleVoiceOrderRepo.findById(orderId);
     if (!order) {
       throw createError(
         ERROR_MESSAGES[ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND],
         404,
-        ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND,
-      )
+        ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND
+      );
     }
 
     if (order.buyerId.toString() !== userId) {
-      throw createError(ERROR_MESSAGES[ERROR_CODES.FORBIDDEN], 403, ERROR_CODES.FORBIDDEN)
+      throw createError(
+        ERROR_MESSAGES[ERROR_CODES.FORBIDDEN],
+        403,
+        ERROR_CODES.FORBIDDEN
+      );
     }
 
-    return order
+    return order;
   }
 
   async getUserOrders(userId: string, status?: string) {
-    return this.googleVoiceOrderRepo.findByBuyerId(userId, status)
+    return this.googleVoiceOrderRepo.findByBuyerId(userId, status);
   }
 
   async checkDisputeWindow(orderId: string) {
-    const order = await this.googleVoiceOrderRepo.findById(orderId)
+    const order = await this.googleVoiceOrderRepo.findById(orderId);
     if (!order) {
       throw createError(
         ERROR_MESSAGES[ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND],
         404,
-        ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND,
-      )
+        ERROR_CODES.GOOGLE_VOICE_ORDER_NOT_FOUND
+      );
     }
 
     if (order.status !== "delivered" || !order.expiresAt) {
       return {
         canReportIssue: false,
         message: "Order is not in delivered status",
-      }
+      };
     }
 
-    const now = new Date()
-    const canReportIssue = now <= order.expiresAt
-    const timeRemaining = canReportIssue ? Math.max(0, order.expiresAt.getTime() - now.getTime()) : 0
+    const now = new Date();
+    const canReportIssue = now <= order.expiresAt;
+    const timeRemaining = canReportIssue
+      ? Math.max(0, order.expiresAt.getTime() - now.getTime())
+      : 0;
 
     return {
       canReportIssue,
@@ -228,17 +262,22 @@ export class GoogleVoiceService {
       message: canReportIssue
         ? `You have ${Math.ceil(timeRemaining / 1000 / 60)} minutes remaining to report issues`
         : "Dispute window has expired",
-    }
+    };
   }
 
   async autoCompleteExpiredOrders() {
     try {
-      const expiredOrders = await this.googleVoiceOrderRepo.findExpiredDisputeWindows()
+      const expiredOrders =
+        await this.googleVoiceOrderRepo.findExpiredDisputeWindows();
 
       for (const order of expiredOrders) {
-        await this.googleVoiceOrderRepo.updateStatus(String(order._id), "completed", {
-          completedAt: new Date(),
-        })
+        await this.googleVoiceOrderRepo.updateStatus(
+          String(order._id),
+          "completed",
+          {
+            completedAt: new Date(),
+          }
+        );
 
         // Notify user
         await this.notificationService.send({
@@ -247,17 +286,17 @@ export class GoogleVoiceService {
           title: "Google Voice Order Completed",
           message: `Your Google Voice order ${order.txRef} has been completed. The 5-minute dispute window has expired.`,
           channels: ["email"],
-        })
+        });
 
-        logger.info(`Auto-completed Google Voice order: ${order.txRef}`)
+        logger.info(`Auto-completed Google Voice order: ${order.txRef}`);
       }
 
       return {
         completedCount: expiredOrders.length,
-      }
+      };
     } catch (error) {
-      logger.error("Auto-complete expired orders error:", error)
-      throw error
+      logger.error("Auto-complete expired orders error:", error);
+      throw error;
     }
   }
 }

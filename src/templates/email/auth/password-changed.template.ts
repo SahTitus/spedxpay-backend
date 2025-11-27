@@ -1,8 +1,8 @@
-import { getEmailLayout, type EmailTemplateData } from "../base.template"
+import { getEmailLayout, type EmailTemplateData } from "../base.template.js";
 
 export interface PasswordChangedEmailData extends EmailTemplateData {
-  timestamp: string
-  supportEmail?: string
+  timestamp: string;
+  supportEmail?: string;
 }
 
 export const getPasswordChangedEmail = (data: PasswordChangedEmailData) => {
@@ -44,10 +44,10 @@ export const getPasswordChangedEmail = (data: PasswordChangedEmailData) => {
         <li>Be cautious of phishing emails asking for your credentials</li>
       </ul>
     </div>
-  `
+  `;
 
   return {
     subject: "Your spedxpay Password Has Been Changed",
     html: getEmailLayout(content, "Password successfully changed"),
-  }
-}
+  };
+};

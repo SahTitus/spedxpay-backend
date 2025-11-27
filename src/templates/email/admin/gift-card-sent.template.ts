@@ -1,12 +1,12 @@
-import { getEmailLayout } from "../../../templates/email/base.template"
+import { getEmailLayout } from "../../../templates/email/base.template.js";
 
 export interface AdminGiftCardSentEmailData {
-  userName: string
-  userEmail: string
-  txRef: string
-  giftCardType: string
-  faceValue: number
-  reviewLink: string
+  userName: string;
+  userEmail: string;
+  txRef: string;
+  giftCardType: string;
+  faceValue: number;
+  reviewLink: string;
 }
 
 export const getAdminGiftCardSentEmail = (data: AdminGiftCardSentEmailData) => {
@@ -50,10 +50,10 @@ export const getAdminGiftCardSentEmail = (data: AdminGiftCardSentEmailData) => {
     <div class="cta-container">
       <a href="${data.reviewLink}" class="cta-button">Review Submission</a>
     </div>
-  `
+  `;
 
   return {
     subject: `[Action Required] User Has Sent Gift Card - ${data.txRef}`,
     html: getEmailLayout(content, "Gift card submission ready for review"),
-  }
-}
+  };
+};

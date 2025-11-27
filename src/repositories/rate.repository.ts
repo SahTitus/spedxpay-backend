@@ -1,13 +1,16 @@
-import { BaseRepository } from "./base/base.repository"
-import { Rate, type IRate } from "../models/Rate.model"
+import { BaseRepository } from "./base/base.repository";
+import { Rate, type IRate } from "../models/Rate.model.js";
 
 export class RateRepository extends BaseRepository<IRate> {
   constructor() {
-    super(Rate)
+    super(Rate);
   }
 
   async getLatestRate(cryptocurrency: string) {
-    return this.model.findOne({ cryptocurrency }).sort({ lastUpdated: -1 }).exec()
+    return this.model
+      .findOne({ cryptocurrency })
+      .sort({ lastUpdated: -1 })
+      .exec();
   }
 
   async getAllLatestRates() {
@@ -26,12 +29,18 @@ export class RateRepository extends BaseRepository<IRate> {
           $replaceRoot: { newRoot: "$rate" },
         },
       ])
-      .exec()
+      .exec();
 
-    return rates
+    return rates;
   }
 
-  async upsertRate(cryptocurrency: string, buyRate: number, sellRate: number, source: string, metadata?: any) {
+  async upsertRate(
+    cryptocurrency: string,
+    buyRate: number,
+    sellRate: number,
+    source: string,
+    metadata?: any
+  ) {
     return this.model
       .findOneAndUpdate(
         { cryptocurrency },
@@ -42,8 +51,8 @@ export class RateRepository extends BaseRepository<IRate> {
           lastUpdated: new Date(),
           metadata,
         },
-        { upsert: true, new: true },
+        { upsert: true, new: true }
       )
-      .exec()
+      .exec();
   }
 }

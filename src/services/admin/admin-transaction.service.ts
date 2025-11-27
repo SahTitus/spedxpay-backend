@@ -1,65 +1,85 @@
-import { TransactionRepository } from "../../repositories/transaction.repository"
-import { UserRepository } from "../../repositories/user.repository"
-import { NotificationService } from "../../services/shared/notification.service"
-import { createError } from "../../middlewares/common/error.middleware"
-import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
-import { TRANSACTION_STATUS } from "../../constants/statuses"
-import { logger } from "../../utils/logger"
+import { TransactionRepository } from "../../repositories/transaction.repository.js";
+import { UserRepository } from "../../repositories/user.repository.js";
+import { NotificationService } from "../../services/shared/notification.service.js";
+import { createError } from "../../middlewares/common/error.middleware.js";
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes.js";
+import { TRANSACTION_STATUS } from "../../constants/statuses.js";
+import { logger } from "../../utils/logger.js";
 
 export interface ConfirmPaymentDto {
-  blockchainTxHash?: string
-  adminNotes?: string
+  blockchainTxHash?: string;
+  adminNotes?: string;
 }
 
 export interface CompleteTransactionDto {
-  adminNotes?: string
+  adminNotes?: string;
 }
 
 export interface RejectTransactionDto {
-  reason: string
+  reason: string;
 }
 
 export class AdminTransactionService {
-  private transactionRepo: TransactionRepository
-  private userRepo: UserRepository
-  private notificationService: NotificationService
+  private transactionRepo: TransactionRepository;
+  private userRepo: UserRepository;
+  private notificationService: NotificationService;
 
   constructor() {
-    this.transactionRepo = new TransactionRepository()
-    this.userRepo = new UserRepository()
-    this.notificationService = new NotificationService()
+    this.transactionRepo = new TransactionRepository();
+    this.userRepo = new UserRepository();
+    this.notificationService = new NotificationService();
   }
 
   async getPendingTransactions() {
-    return this.transactionRepo.findPendingTransactions()
+    return this.transactionRepo.findPendingTransactions();
   }
 
   async getTransaction(transactionId: string) {
-    const transaction = await this.transactionRepo.findById(transactionId)
+    const transaction = await this.transactionRepo.findById(transactionId);
     if (!transaction) {
-      throw createError(ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND], 404, ERROR_CODES.TRANSACTION_NOT_FOUND)
+      throw createError(
+        ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND],
+        404,
+        ERROR_CODES.TRANSACTION_NOT_FOUND
+      );
     }
-    return transaction
+    return transaction;
   }
 
-  async confirmPayment(adminId: string, transactionId: string, data: ConfirmPaymentDto) {
+  async confirmPayment(
+    adminId: string,
+    transactionId: string,
+    data: ConfirmPaymentDto
+  ) {
     try {
-      const transaction = await this.transactionRepo.findById(transactionId)
+      const transaction = await this.transactionRepo.findById(transactionId);
       if (!transaction) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND], 404, ERROR_CODES.TRANSACTION_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND],
+          404,
+          ERROR_CODES.TRANSACTION_NOT_FOUND
+        );
       }
 
       if (transaction.status !== TRANSACTION_STATUS.UNDER_REVIEW) {
-        throw createError("Transaction is not under review", 400, ERROR_CODES.INVALID_INPUT)
+        throw createError(
+          "Transaction is not under review",
+          400,
+          ERROR_CODES.INVALID_INPUT
+        );
       }
 
       // Update transaction
-      await this.transactionRepo.updateStatus(transactionId, TRANSACTION_STATUS.PAYMENT_CONFIRMED, {
-        reviewedBy: adminId,
-        reviewedAt: new Date(),
-        blockchainTxHash: data.blockchainTxHash,
-        adminNotes: data.adminNotes,
-      })
+      await this.transactionRepo.updateStatus(
+        transactionId,
+        TRANSACTION_STATUS.PAYMENT_CONFIRMED,
+        {
+          reviewedBy: adminId,
+          reviewedAt: new Date(),
+          blockchainTxHash: data.blockchainTxHash,
+          adminNotes: data.adminNotes,
+        }
+      );
 
       // Notify user
       await this.notificationService.send({
@@ -72,33 +92,47 @@ export class AdminTransactionService {
           transactionId: transaction._id,
           txRef: transaction.txRef,
         },
-      })
+      });
 
-      logger.info(`Payment confirmed for transaction ${transaction.txRef} by admin ${adminId}`)
+      logger.info(
+        `Payment confirmed for transaction ${transaction.txRef} by admin ${adminId}`
+      );
 
       return {
         message: "Payment confirmed successfully",
-      }
+      };
     } catch (error) {
-      logger.error("Confirm payment error:", error)
-      throw error
+      logger.error("Confirm payment error:", error);
+      throw error;
     }
   }
 
-  async completeTransaction(adminId: string, transactionId: string, data: CompleteTransactionDto) {
+  async completeTransaction(
+    adminId: string,
+    transactionId: string,
+    data: CompleteTransactionDto
+  ) {
     try {
-      const transaction = await this.transactionRepo.findById(transactionId)
+      const transaction = await this.transactionRepo.findById(transactionId);
       if (!transaction) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND], 404, ERROR_CODES.TRANSACTION_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND],
+          404,
+          ERROR_CODES.TRANSACTION_NOT_FOUND
+        );
       }
 
       // Update transaction
-      await this.transactionRepo.updateStatus(transactionId, TRANSACTION_STATUS.COMPLETED, {
-        reviewedBy: adminId,
-        reviewedAt: new Date(),
-        completedAt: new Date(),
-        adminNotes: data.adminNotes,
-      })
+      await this.transactionRepo.updateStatus(
+        transactionId,
+        TRANSACTION_STATUS.COMPLETED,
+        {
+          reviewedBy: adminId,
+          reviewedAt: new Date(),
+          completedAt: new Date(),
+          adminNotes: data.adminNotes,
+        }
+      );
 
       // Notify user
       await this.notificationService.send({
@@ -111,32 +145,46 @@ export class AdminTransactionService {
           transactionId: transaction._id,
           txRef: transaction.txRef,
         },
-      })
+      });
 
-      logger.info(`Transaction completed: ${transaction.txRef} by admin ${adminId}`)
+      logger.info(
+        `Transaction completed: ${transaction.txRef} by admin ${adminId}`
+      );
 
       return {
         message: "Transaction completed successfully",
-      }
+      };
     } catch (error) {
-      logger.error("Complete transaction error:", error)
-      throw error
+      logger.error("Complete transaction error:", error);
+      throw error;
     }
   }
 
-  async rejectTransaction(adminId: string, transactionId: string, data: RejectTransactionDto) {
+  async rejectTransaction(
+    adminId: string,
+    transactionId: string,
+    data: RejectTransactionDto
+  ) {
     try {
-      const transaction = await this.transactionRepo.findById(transactionId)
+      const transaction = await this.transactionRepo.findById(transactionId);
       if (!transaction) {
-        throw createError(ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND], 404, ERROR_CODES.TRANSACTION_NOT_FOUND)
+        throw createError(
+          ERROR_MESSAGES[ERROR_CODES.TRANSACTION_NOT_FOUND],
+          404,
+          ERROR_CODES.TRANSACTION_NOT_FOUND
+        );
       }
 
       // Update transaction
-      await this.transactionRepo.updateStatus(transactionId, TRANSACTION_STATUS.REJECTED, {
-        reviewedBy: adminId,
-        reviewedAt: new Date(),
-        adminNotes: data.reason,
-      })
+      await this.transactionRepo.updateStatus(
+        transactionId,
+        TRANSACTION_STATUS.REJECTED,
+        {
+          reviewedBy: adminId,
+          reviewedAt: new Date(),
+          adminNotes: data.reason,
+        }
+      );
 
       // Notify user
       await this.notificationService.send({
@@ -150,25 +198,32 @@ export class AdminTransactionService {
           txRef: transaction.txRef,
           reason: data.reason,
         },
-      })
+      });
 
-      logger.info(`Transaction rejected: ${transaction.txRef} by admin ${adminId}`)
+      logger.info(
+        `Transaction rejected: ${transaction.txRef} by admin ${adminId}`
+      );
 
       return {
         message: "Transaction rejected successfully",
-      }
+      };
     } catch (error) {
-      logger.error("Reject transaction error:", error)
-      throw error
+      logger.error("Reject transaction error:", error);
+      throw error;
     }
   }
 
-  async getAllTransactions(page = 1, limit = 20, filters: any = {}, search?: string) {
-    const skip = (page - 1) * limit
+  async getAllTransactions(
+    page = 1,
+    limit = 20,
+    filters: any = {},
+    search?: string
+  ) {
+    const skip = (page - 1) * limit;
     const [transactions, total] = await Promise.all([
       this.transactionRepo.findAllWithFilters(skip, limit, filters, search),
       this.transactionRepo.countWithFilters(filters, search),
-    ] )
+    ]);
 
     return {
       transactions: transactions.map((tx: any) => ({
@@ -191,7 +246,9 @@ export class AdminTransactionService {
         paymentMethod: tx.paymentMethod,
         proofOfPayment: tx.proofOfPayment,
         proofOfSend: tx.proofOfSend,
-        reviewedBy: tx.reviewedBy ? { name: tx.reviewedBy.name, email: tx.reviewedBy.email } : null,
+        reviewedBy: tx.reviewedBy
+          ? { name: tx.reviewedBy.name, email: tx.reviewedBy.email }
+          : null,
         reviewedAt: tx.reviewedAt,
         completedAt: tx.completedAt,
         createdAt: tx.createdAt,
@@ -203,6 +260,6 @@ export class AdminTransactionService {
         total,
         totalPages: Math.ceil(total / limit),
       },
-    }
+    };
   }
 }

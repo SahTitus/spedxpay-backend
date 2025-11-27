@@ -1,15 +1,17 @@
-import { getEmailLayout } from "../../../templates/email/base.template"
+import { getEmailLayout } from "../../../templates/email/base.template.js";
 
 export interface GiftCardSellCreatedEmailData {
-  userName: string
-  giftCardType: string
-  faceValue: number
-  amountToReceive: number
-  txRef: string
-  dashboardLink: string
+  userName: string;
+  giftCardType: string;
+  faceValue: number;
+  amountToReceive: number;
+  txRef: string;
+  dashboardLink: string;
 }
 
-export const getGiftCardSellCreatedEmail = (data: GiftCardSellCreatedEmailData) => {
+export const getGiftCardSellCreatedEmail = (
+  data: GiftCardSellCreatedEmailData
+) => {
   const content = `
     <div class="greeting">Hello ${data.userName}! 👋</div>
     
@@ -55,10 +57,10 @@ export const getGiftCardSellCreatedEmail = (data: GiftCardSellCreatedEmailData) 
       <strong>⚠️ Important:</strong> Only click "I Have Sent" after you have actually sold/redeemed the gift card. 
       False submissions may result in account suspension.
     </div>
-  `
+  `;
 
   return {
     subject: `Gift Card Sale Order Created - ${data.txRef}`,
     html: getEmailLayout(content, "Gift card sale order created"),
-  }
-}
+  };
+};

@@ -1,13 +1,13 @@
-import { getEmailLayout, type EmailTemplateData } from "../base.template"
+import { getEmailLayout, type EmailTemplateData } from "../base.template.js";
 
 export interface CryptoSellCreatedEmailData extends EmailTemplateData {
-  txRef: string
-  cryptocurrency: string
-  amountCrypto: number
-  amountFiat: number
-  platformWalletAddress: string
-  expiresAt: Date
-  transactionLink: string
+  txRef: string;
+  cryptocurrency: string;
+  amountCrypto: number;
+  amountFiat: number;
+  platformWalletAddress: string;
+  expiresAt: Date;
+  transactionLink: string;
 }
 
 export const getCryptoSellCreatedEmail = (data: CryptoSellCreatedEmailData) => {
@@ -76,10 +76,13 @@ export const getCryptoSellCreatedEmail = (data: CryptoSellCreatedEmailData) => {
     <div class="alert">
       <strong>Important:</strong> This transaction will expire in 30 minutes. Please complete it before ${new Date(data.expiresAt).toLocaleTimeString()}.
     </div>
-  `
+  `;
 
   return {
     subject: `Sell ${data.cryptocurrency} Transaction Created - ${data.txRef}`,
-    html: getEmailLayout(content, `Send ${data.amountCrypto} ${data.cryptocurrency} to complete your transaction`),
-  }
-}
+    html: getEmailLayout(
+      content,
+      `Send ${data.amountCrypto} ${data.cryptocurrency} to complete your transaction`
+    ),
+  };
+};

@@ -1,6 +1,6 @@
 import cron from "node-cron";
 import type { ScheduledTask } from "node-cron";
-import { logger } from "../../utils/logger";
+import { logger } from "../../utils/logger.js";
 import { exec } from "child_process";
 import { promisify } from "util";
 
@@ -85,8 +85,8 @@ export class SchedulerService {
   private scheduleNotificationCleanup(): void {
     const job = cron.schedule("0 2 * * *", async () => {
       try {
-      logger.info( "[CRON] Starting notification cleanup job..." );
-         
+        logger.info("[CRON] Starting notification cleanup job...");
+
         const { stdout, stderr } = await execAsync(
           "npm run script:cleanup-notifications"
         );

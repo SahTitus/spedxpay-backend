@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { AuthController } from "../controllers/auth/auth.controller";
-import { validation } from "../middlewares/common/validation.middleware";
-import { authMiddleware } from "../middlewares/auth/auth.middleware";
+import { AuthController } from "../controllers/auth/auth.controller.js";
+import { validation } from "../middlewares/common/validation.middleware.js";
+import { authMiddleware } from "../middlewares/auth/auth.middleware.js";
 import {
   registerSchema,
   loginSchema,
@@ -9,7 +9,7 @@ import {
   requestPasswordResetSchema,
   resetPasswordSchema,
   changePasswordSchema,
-} from "../validators/auth.validator";
+} from "../validators/auth.validator.js";
 
 const router = Router();
 const authController = new AuthController();
@@ -45,14 +45,12 @@ router.post(
   authController.resetPassword
 );
 
-
 router.post(
   "/change-password",
   authMiddleware,
   validation.validate({ body: changePasswordSchema }),
-  authController.changePassword,
-)
-
+  authController.changePassword
+);
 
 router.get("/me", authMiddleware, authController.getMe);
 
