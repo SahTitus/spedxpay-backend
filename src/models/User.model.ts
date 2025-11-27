@@ -1,6 +1,6 @@
 import mongoose, { Schema, type Document } from "mongoose"
 import bcrypt from "bcryptjs"
-import { USER_ROLE } from "@/constants/statuses"
+import { USER_ROLE } from "../constants/statuses"
 
 export interface IUser extends Document {
   name: string

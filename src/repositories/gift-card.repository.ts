@@ -1,6 +1,6 @@
 import { BaseRepository } from "./base/base.repository"
-import { GiftCard, type IGiftCard } from "@/models/GiftCard.model"
-import { User } from "@/models/User.model"
+import { GiftCard, type IGiftCard } from "../models/GiftCard.model"
+import { User } from "../models/User.model"
 
 export class GiftCardRepository extends BaseRepository<IGiftCard> {
   constructor() {

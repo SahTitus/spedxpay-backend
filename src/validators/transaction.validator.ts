@@ -1,6 +1,6 @@
 import Joi from "joi"
-import { TRANSACTION_TYPE, TRANSACTION_STATUS } from "@/constants/statuses"
-import { GIFT_CARD_TYPES } from "@/constants/currencies"
+import { TRANSACTION_TYPE, TRANSACTION_STATUS } from "../constants/statuses"
+import { GIFT_CARD_TYPES } from "../constants/currencies"
 
 export const getTransactionsQuerySchema = Joi.object({
   page: Joi.number().integer().min(1).default(1).messages({

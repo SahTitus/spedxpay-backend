@@ -1,4 +1,4 @@
-import { GiftCardType, type IGiftCardType } from "@/models/GiftCardType.model"
+import { GiftCardType, type IGiftCardType } from "../models/GiftCardType.model"
 
 export class GiftCardTypeRepository {
   async create(data: Partial<IGiftCardType>): Promise<IGiftCardType> {

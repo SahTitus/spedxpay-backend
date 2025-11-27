@@ -1,5 +1,5 @@
-import { PlatformConfigRepository } from "@/repositories/platform-config.repository"
-import { logger } from "@/utils/logger"
+import { PlatformConfigRepository } from "../../repositories/platform-config.repository"
+import { logger } from "../../utils/logger"
 
 export interface UpdatePlatformConfigDto {
   wallets?: {

@@ -1,12 +1,12 @@
 import { Router } from "express"
-import { GoogleVoiceController } from "@/controllers/google-voice/google-voice.controller"
-import { validation } from "@/middlewares/common/validation.middleware"
-import { authMiddleware } from "@/middlewares/auth/auth.middleware"
+import { GoogleVoiceController } from "../controllers/google-voice/google-voice.controller"
+import { validation } from "../middlewares/common/validation.middleware"
+import { authMiddleware } from "../middlewares/auth/auth.middleware"
 import {
   createGoogleVoiceOrderSchema,
   reportIssueSchema,
   orderIdParamSchema,
-} from "@/validators/google-voice.validator"
+} from "../validators/google-voice.validator"
 
 const router = Router()
 const googleVoiceController = new GoogleVoiceController()

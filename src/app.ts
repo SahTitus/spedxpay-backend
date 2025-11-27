@@ -3,9 +3,9 @@ import cors from "cors"
 import helmet from "helmet"
 import compression from "compression"
 import morgan from "morgan"
-import { errorMiddleware } from "@/middlewares/common/error.middleware"
-import { logger } from "@/utils/logger"
-import routes from "@/routes"
+import { errorMiddleware } from "./middlewares/common/error.middleware"
+import { logger } from "./utils/logger"
+import routes from "./routes"
 
 export function createApp(): Application {
   const app = express()

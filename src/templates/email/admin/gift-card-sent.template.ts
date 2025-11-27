@@ -1,4 +1,4 @@
-import { getEmailLayout } from "@/templates/email/base.template"
+import { getEmailLayout } from "../../../templates/email/base.template"
 
 export interface AdminGiftCardSentEmailData {
   userName: string

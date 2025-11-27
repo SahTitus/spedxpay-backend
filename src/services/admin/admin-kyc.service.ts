@@ -1,10 +1,10 @@
-import { KycRepository } from "@/repositories/kyc.repository"
-import { UserRepository } from "@/repositories/user.repository"
-import { NotificationService } from "@/services/shared/notification.service"
-import { createError } from "@/middlewares/common/error.middleware"
-import { ERROR_CODES, ERROR_MESSAGES } from "@/constants/error-codes"
-import { KYC_STATUS } from "@/constants/statuses"
-import { logger } from "@/utils/logger"
+import { KycRepository } from "../../repositories/kyc.repository"
+import { UserRepository } from "../../repositories/user.repository"
+import { NotificationService } from "../../services/shared/notification.service"
+import { createError } from "../../middlewares/common/error.middleware"
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
+import { KYC_STATUS } from "../../constants/statuses"
+import { logger } from "../../utils/logger"
 
 export interface ReviewKycDto {
   status: "approved" | "rejected"

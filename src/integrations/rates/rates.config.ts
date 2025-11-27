@@ -1,6 +1,6 @@
 import { CoinGeckoProvider } from "./coingecko-provider"
 import type { IRateProvider } from "./rate-provider.interface"
-import { appConfig } from "@/config/app.config"
+import { appConfig } from "../../config/app.config"
 
 export interface RatesConfig {
   provider: string

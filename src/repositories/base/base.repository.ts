@@ -2,7 +2,7 @@ import type { Model, Document, FilterQuery, UpdateQuery } from "mongoose";
 import {
   type PaginationOptions,
   getPaginationParams,
-} from "@/utils/pagination";
+} from "../../utils/pagination";
 
 export interface IBaseRepository<T extends Document> {
   create(data: Partial<T>): Promise<T>;

@@ -1,13 +1,13 @@
 import type { Response, NextFunction } from "express"
-import type { AuthRequest } from "@/middlewares/auth/auth.middleware"
-import { AdminKycService } from "@/services/admin/admin-kyc.service"
-import { AdminTransactionService } from "@/services/admin/admin-transaction.service"
-import { AdminGiftCardService } from "@/services/admin/admin-gift-card.service"
-import { AdminGoogleVoiceService } from "@/services/admin/admin-google-voice.service"
-import { AdminConfigService } from "@/services/admin/admin-config.service"
-import { AdminGiftCardTypeService } from "@/services/admin/admin-gift-card-type.service"
-import { successResponse } from "@/utils/response-formatter"
-import { asyncHandler } from "@/middlewares/common/error.middleware"
+import type { AuthRequest } from "../../middlewares/auth/auth.middleware"
+import { AdminKycService } from "../../services/admin/admin-kyc.service"
+import { AdminTransactionService } from "../../services/admin/admin-transaction.service"
+import { AdminGiftCardService } from "../../services/admin/admin-gift-card.service"
+import { AdminGoogleVoiceService } from "../../services/admin/admin-google-voice.service"
+import { AdminConfigService } from "../../services/admin/admin-config.service"
+import { AdminGiftCardTypeService } from "../../services/admin/admin-gift-card-type.service"
+import { successResponse } from "../../utils/response-formatter"
+import { asyncHandler } from "../../middlewares/common/error.middleware"
 
 export class AdminController {
   private adminKycService: AdminKycService

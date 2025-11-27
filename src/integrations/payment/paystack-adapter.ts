@@ -1,6 +1,6 @@
 import type { IPaymentAdapter, PaymentResult } from "./payment-adapter.interface"
-import { appConfig } from "@/config/app.config"
-import { logger } from "@/utils/logger"
+import { appConfig } from "../../config/app.config"
+import { logger } from "../../utils/logger"
 
 export class PaystackAdapter implements IPaymentAdapter {
   private secretKey: string

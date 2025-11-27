@@ -1,6 +1,6 @@
-import { connectDatabase } from "@/config/database.config"
-import { GoogleVoiceService } from "@/services/google-voice/google-voice.service"
-import { logger } from "@/utils/logger"
+import { connectDatabase } from "../config/database.config"
+import { GoogleVoiceService } from "../services/google-voice/google-voice.service"
+import { logger } from "../utils/logger"
 
 async function cleanupGoogleVoiceOrders() {
   try {

@@ -1,11 +1,11 @@
 import crypto from "crypto"
-import { logger } from "@/utils/logger"
-import { KycRepository } from "@/repositories/kyc.repository"
-import { UserRepository } from "@/repositories/user.repository"
-import { generateToken, generateRefreshToken } from "@/utils/jwt"
-import { createError } from "@/middlewares/common/error.middleware"
-import { ERROR_CODES, ERROR_MESSAGES } from "@/constants/error-codes"
-import { NotificationService } from "@/services/shared/notification.service"
+import { logger } from "../../utils/logger"
+import { KycRepository } from "../../repositories/kyc.repository"
+import { UserRepository } from "../../repositories/user.repository"
+import { generateToken, generateRefreshToken } from "../../utils/jwt"
+import { createError } from "../../middlewares/common/error.middleware"
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
+import { NotificationService } from "../../services/shared/notification.service"
 
 export interface RegisterUserDto {
   name: string

@@ -1,8 +1,8 @@
 import type { Response, NextFunction } from "express"
-import type { AuthRequest } from "@/middlewares/auth/auth.middleware"
-import { CryptoTradingService } from "@/services/crypto/crypto-trading.service"
-import { successResponse } from "@/utils/response-formatter"
-import { asyncHandler } from "@/middlewares/common/error.middleware"
+import type { AuthRequest } from "../../middlewares/auth/auth.middleware"
+import { CryptoTradingService } from "../../services/crypto/crypto-trading.service"
+import { successResponse } from "../../utils/response-formatter"
+import { asyncHandler } from "../../middlewares/common/error.middleware"
 
 export class CryptoTradingController {
   private cryptoTradingService: CryptoTradingService

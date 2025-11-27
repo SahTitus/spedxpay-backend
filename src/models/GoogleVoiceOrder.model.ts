@@ -1,6 +1,6 @@
 import mongoose, { Schema, type Document } from "mongoose"
 import type { DateExpressionOperator} from "mongoose"
-import { decrypt } from "@/utils/encryption"
+import { decrypt } from "../utils/encryption"
 
 export interface IAccountDetails {
   accountEmail: string

@@ -1,5 +1,5 @@
 import mongoose, { Schema, type Document } from "mongoose"
-import { CRYPTO_CURRENCIES } from "@/constants/currencies"
+import { CRYPTO_CURRENCIES } from "../constants/currencies"
 
 export interface IRate extends Document {
   cryptocurrency: string

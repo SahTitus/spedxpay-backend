@@ -1,6 +1,6 @@
 import cron from "node-cron";
 import type { ScheduledTask } from "node-cron";
-import { logger } from "@/utils/logger";
+import { logger } from "../../utils/logger";
 import { exec } from "child_process";
 import { promisify } from "util";
 

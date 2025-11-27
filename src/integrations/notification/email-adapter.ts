@@ -1,6 +1,6 @@
 import { Resend } from "resend"
-import { appConfig } from "@/config/app.config"
-import { logger } from "@/utils/logger"
+import { appConfig } from "../../config/app.config"
+import { logger } from "../../utils/logger"
 import type { INotificationAdapter, EmailData, SMSData } from "./notification-adapter.interface"
 
 export class EmailAdapter implements INotificationAdapter {

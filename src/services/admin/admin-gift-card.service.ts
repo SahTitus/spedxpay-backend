@@ -1,9 +1,9 @@
-import { GiftCardRepository } from "@/repositories/gift-card.repository"
-import { UserRepository } from "@/repositories/user.repository"
-import { NotificationService } from "@/services/shared/notification.service"
-import { createError } from "@/middlewares/common/error.middleware"
-import { ERROR_CODES, ERROR_MESSAGES } from "@/constants/error-codes"
-import { logger } from "@/utils/logger"
+import { GiftCardRepository } from "../../repositories/gift-card.repository"
+import { UserRepository } from "../../repositories/user.repository"
+import { NotificationService } from "../../services/shared/notification.service"
+import { createError } from "../../middlewares/common/error.middleware"
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
+import { logger } from "../../utils/logger"
 
 export interface ReviewGiftCardDto {
   status: "approved" | "rejected"

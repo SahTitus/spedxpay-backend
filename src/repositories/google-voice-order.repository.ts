@@ -1,6 +1,6 @@
 import { BaseRepository } from "./base/base.repository"
-import { GoogleVoiceOrder, type IGoogleVoiceOrder } from "@/models/GoogleVoiceOrder.model"
-import { User } from "@/models/User.model"
+import { GoogleVoiceOrder, type IGoogleVoiceOrder } from "../models/GoogleVoiceOrder.model"
+import { User } from "../models/User.model"
 
 export class GoogleVoiceOrderRepository extends BaseRepository<IGoogleVoiceOrder> {
   constructor() {

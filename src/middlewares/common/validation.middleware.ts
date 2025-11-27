@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express"
 import type Joi from "joi"
-import { errorResponse } from "@/utils/response-formatter"
-import { logger } from "@/utils/logger"
+import { errorResponse } from "../../utils/response-formatter"
+import { logger } from "../../utils/logger"
 
 export class ValidationMiddleware {
   validateBody = (schema: Joi.ObjectSchema) => {

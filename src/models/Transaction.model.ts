@@ -1,6 +1,6 @@
 import mongoose, { Schema, type Document } from "mongoose"
-import { TRANSACTION_STATUS, TRANSACTION_TYPE } from "@/constants/statuses"
-import { CRYPTO_CURRENCIES, FIAT_CURRENCIES } from "@/constants/currencies"
+import { TRANSACTION_STATUS, TRANSACTION_TYPE } from "../constants/statuses"
+import { CRYPTO_CURRENCIES, FIAT_CURRENCIES } from "../constants/currencies"
 
 export interface ITransaction extends Document {
   userId: mongoose.Types.ObjectId

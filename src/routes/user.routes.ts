@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { UserController } from "@/controllers/user/user.controller";
-import { validation } from "@/middlewares/common/validation.middleware";
-import { authMiddleware } from "@/middlewares/auth/auth.middleware";
+import { UserController } from "../controllers/user/user.controller";
+import { validation } from "../middlewares/common/validation.middleware";
+import { authMiddleware } from "../middlewares/auth/auth.middleware";
 import {
   updateProfileSchema,
   addPaymentMethodSchema,
   paymentMethodIndexSchema,
   removePaymentMethodSchema,
-} from "@/validators/user.validator";
+} from "../validators/user.validator";
 
 const router = Router();
 const userController = new UserController();

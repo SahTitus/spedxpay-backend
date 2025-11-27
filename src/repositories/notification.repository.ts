@@ -1,5 +1,5 @@
 import { BaseRepository } from "./base/base.repository"
-import { Notification, type INotification } from "@/models/Notification.model"
+import { Notification, type INotification } from "../models/Notification.model"
 
 export class NotificationRepository extends BaseRepository<INotification> {
   constructor() {

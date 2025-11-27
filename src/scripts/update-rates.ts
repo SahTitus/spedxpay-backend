@@ -1,6 +1,6 @@
-import { connectDatabase } from "@/config/database.config"
-import { RatesService } from "@/services/rates/rates.service"
-import { logger } from "@/utils/logger"
+import { connectDatabase } from "../config/database.config"
+import { RatesService } from "../services/rates/rates.service"
+import { logger } from "../utils/logger"
 
 async function updateRates() {
   try {

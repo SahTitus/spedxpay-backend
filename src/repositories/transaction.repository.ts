@@ -1,9 +1,9 @@
 import { BaseRepository } from "./base/base.repository"
-import { Transaction, type ITransaction } from "@/models/Transaction.model"
-import { GiftCard } from "@/models/GiftCard.model"
-import { GoogleVoiceOrder } from "@/models/GoogleVoiceOrder.model"
-import { User } from "@/models/User.model"
-import { TRANSACTION_STATUS, TRANSACTION_TYPE } from "@/constants/statuses"
+import { Transaction, type ITransaction } from "../models/Transaction.model"
+import { GiftCard } from "../models/GiftCard.model"
+import { GoogleVoiceOrder } from "../models/GoogleVoiceOrder.model"
+import { User } from "../models/User.model"
+import { TRANSACTION_STATUS, TRANSACTION_TYPE } from "../constants/statuses"
 
 export class TransactionRepository extends BaseRepository<ITransaction> {
   constructor() {

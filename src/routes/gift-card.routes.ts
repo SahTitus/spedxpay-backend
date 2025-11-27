@@ -1,12 +1,12 @@
 import { Router } from "express"
-import { GiftCardController } from "@/controllers/gift-card/gift-card.controller"
-import { validation } from "@/middlewares/common/validation.middleware"
-import { authMiddleware } from "@/middlewares/auth/auth.middleware"
+import { GiftCardController } from "../controllers/gift-card/gift-card.controller"
+import { validation } from "../middlewares/common/validation.middleware"
+import { authMiddleware } from "../middlewares/auth/auth.middleware"
 import {
   sellGiftCardSchema,
   buyGiftCardSchema,
   giftCardIdParamSchema,
-} from "@/validators/gift-card.validator"
+} from "../validators/gift-card.validator"
 
 const router = Router()
 const giftCardController = new GiftCardController()

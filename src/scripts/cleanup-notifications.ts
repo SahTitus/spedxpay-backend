@@ -1,6 +1,6 @@
-import { connectDatabase } from "@/config/database.config"
-import { NotificationService } from "@/services/shared/notification.service"
-import { logger } from "@/utils/logger"
+import { connectDatabase } from "../config/database.config"
+import { NotificationService } from "../services/shared/notification.service"
+import { logger } from "../utils/logger"
 
 async function cleanupNotifications() {
   try {

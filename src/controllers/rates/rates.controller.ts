@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express"
-import { RatesService } from "@/services/rates/rates.service"
-import { successResponse } from "@/utils/response-formatter"
-import { asyncHandler } from "@/middlewares/common/error.middleware"
+import { RatesService } from "../../services/rates/rates.service"
+import { successResponse } from "../../utils/response-formatter"
+import { asyncHandler } from "../../middlewares/common/error.middleware"
 
 export class RatesController {
   private ratesService: RatesService

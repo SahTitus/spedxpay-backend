@@ -1,6 +1,6 @@
 import type { IRateProvider, RateData } from "./rate-provider.interface"
-import { CRYPTO_CURRENCIES } from "@/constants/currencies"
-import { logger } from "@/utils/logger"
+import { CRYPTO_CURRENCIES } from "../../constants/currencies"
+import { logger } from "../../utils/logger"
 
 export class CoinGeckoProvider implements IRateProvider {
   private apiKey: string

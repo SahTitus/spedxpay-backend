@@ -1,8 +1,8 @@
 import type { Response, NextFunction } from "express"
-import type { AuthRequest } from "@/middlewares/auth/auth.middleware"
-import { KycService } from "@/services/kyc/kyc.service"
-import { successResponse } from "@/utils/response-formatter"
-import { asyncHandler } from "@/middlewares/common/error.middleware"
+import type { AuthRequest } from "../../middlewares/auth/auth.middleware"
+import { KycService } from "../../services/kyc/kyc.service"
+import { successResponse } from "../../utils/response-formatter"
+import { asyncHandler } from "../../middlewares/common/error.middleware"
 
 export class KycController {
   private kycService: KycService

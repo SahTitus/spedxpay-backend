@@ -1,9 +1,9 @@
 import { Router } from "express"
-import { AdminController } from "@/controllers/admin/admin.controller"
-import { AdminRoleController } from "@/controllers/admin/admin-role.controller"
-import { validation } from "@/middlewares/common/validation.middleware"
-import { authMiddleware } from "@/middlewares/auth/auth.middleware"
-import { requireAdmin, requireSuperAdmin } from "@/middlewares/auth/permission.middleware"
+import { AdminController } from "../controllers/admin/admin.controller"
+import { AdminRoleController } from "../controllers/admin/admin-role.controller"
+import { validation } from "../middlewares/common/validation.middleware"
+import { authMiddleware } from "../middlewares/auth/auth.middleware"
+import { requireAdmin, requireSuperAdmin } from "../middlewares/auth/permission.middleware"
 import {
   reviewKycSchema,
   confirmPaymentSchema,
@@ -19,7 +19,7 @@ import {
   updateGiftCardTypeSchema,
   assignRoleSchema,
   inviteAdminSchema,
-} from "@/validators/admin.validator"
+} from "../validators/admin.validator"
 
 const router = Router()
 const adminController = new AdminController()

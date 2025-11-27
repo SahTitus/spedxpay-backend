@@ -1,5 +1,5 @@
 import { BaseRepository } from "./base/base.repository"
-import { PlatformConfig, type IPlatformConfig } from "@/models/PlatformConfig.model"
+import { PlatformConfig, type IPlatformConfig } from "../models/PlatformConfig.model"
 
 export class PlatformConfigRepository extends BaseRepository<IPlatformConfig> {
   constructor() {

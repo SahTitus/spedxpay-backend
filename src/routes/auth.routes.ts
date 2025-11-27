@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { AuthController } from "@/controllers/auth/auth.controller";
-import { validation } from "@/middlewares/common/validation.middleware";
-import { authMiddleware } from "@/middlewares/auth/auth.middleware";
+import { AuthController } from "../controllers/auth/auth.controller";
+import { validation } from "../middlewares/common/validation.middleware";
+import { authMiddleware } from "../middlewares/auth/auth.middleware";
 import {
   registerSchema,
   loginSchema,
@@ -9,7 +9,7 @@ import {
   requestPasswordResetSchema,
   resetPasswordSchema,
   changePasswordSchema,
-} from "@/validators/auth.validator";
+} from "../validators/auth.validator";
 
 const router = Router();
 const authController = new AuthController();

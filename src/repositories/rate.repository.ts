@@ -1,5 +1,5 @@
 import { BaseRepository } from "./base/base.repository"
-import { Rate, type IRate } from "@/models/Rate.model"
+import { Rate, type IRate } from "../models/Rate.model"
 
 export class RateRepository extends BaseRepository<IRate> {
   constructor() {

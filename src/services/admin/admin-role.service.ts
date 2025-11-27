@@ -1,11 +1,11 @@
 import crypto from "crypto"
-import { UserRepository } from "@/repositories/user.repository"
-import { AdminInvitationRepository } from "@/repositories/admin-invitation.repository"
-import { NotificationService } from "@/services/shared/notification.service"
-import { ERROR_CODES, ERROR_MESSAGES } from "@/constants/error-codes"
-import { createError } from "@/middlewares/common/error.middleware"
-import { USER_ROLE } from "@/constants/statuses"
-import type { UserRole } from "@/constants/statuses"
+import { UserRepository } from "../../repositories/user.repository"
+import { AdminInvitationRepository } from "../../repositories/admin-invitation.repository"
+import { NotificationService } from "../../services/shared/notification.service"
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
+import { createError } from "../../middlewares/common/error.middleware"
+import { USER_ROLE } from "../../constants/statuses"
+import type { UserRole } from "../../constants/statuses"
 
 export class AdminRoleService {
   private userRepository: UserRepository

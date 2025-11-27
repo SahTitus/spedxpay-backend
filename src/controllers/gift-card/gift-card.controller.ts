@@ -1,8 +1,8 @@
 import type { Response, NextFunction, Request } from "express"
-import type { AuthRequest } from "@/middlewares/auth/auth.middleware"
-import { GiftCardService } from "@/services/gift-card/gift-card.service"
-import { successResponse } from "@/utils/response-formatter"
-import { asyncHandler } from "@/middlewares/common/error.middleware"
+import type { AuthRequest } from "../../middlewares/auth/auth.middleware"
+import { GiftCardService } from "../../services/gift-card/gift-card.service"
+import { successResponse } from "../../utils/response-formatter"
+import { asyncHandler } from "../../middlewares/common/error.middleware"
 
 export class GiftCardController {
   private giftCardService: GiftCardService

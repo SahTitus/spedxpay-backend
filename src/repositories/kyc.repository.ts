@@ -1,7 +1,7 @@
 import { BaseRepository } from "./base/base.repository"
-import { Kyc, type IKyc } from "@/models/Kyc.model"
-import { KYC_STATUS } from "@/constants/statuses"
-import { User } from "@/models/User.model"
+import { Kyc, type IKyc } from "../models/Kyc.model"
+import { KYC_STATUS } from "../constants/statuses"
+import { User } from "../models/User.model"
 
 export class KycRepository extends BaseRepository<IKyc> {
   constructor() {

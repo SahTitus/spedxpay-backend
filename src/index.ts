@@ -1,7 +1,7 @@
 import { createApp } from "./app"
-import { connectDatabase } from "@/config/database.config"
-import { appConfig } from "@/config/app.config"
-import { logger } from "@/utils/logger"
+import { connectDatabase } from "./config/database.config"
+import { appConfig } from "./config/app.config"
+import { logger } from "./utils/logger"
 import { schedulerService } from "./services/scheduler/scheduler.service"
 
 // Create Express application instance

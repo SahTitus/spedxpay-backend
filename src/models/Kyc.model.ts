@@ -1,5 +1,5 @@
 import mongoose, { Schema, type Document } from "mongoose"
-import { KYC_STATUS, KYC_LEVEL } from "@/constants/statuses"
+import { KYC_STATUS, KYC_LEVEL } from "../constants/statuses"
 
 export interface IKyc extends Document {
   userId: mongoose.Types.ObjectId

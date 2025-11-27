@@ -1,5 +1,5 @@
 import mongoose, { Schema, type Document } from "mongoose"
-import { USER_ROLE } from "@/constants/statuses"
+import { USER_ROLE } from "../constants/statuses"
 
 export interface IAdminInvitation extends Document {
   email: string

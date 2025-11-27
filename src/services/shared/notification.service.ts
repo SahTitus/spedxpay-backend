@@ -1,7 +1,7 @@
-import { NotificationRepository } from "@/repositories/notification.repository"
-import { TemplateService } from "@/services/shared/template.service"
-import { notificationAdapter } from "@/integrations/notification/notification.config"
-import { logger } from "@/utils/logger"
+import { NotificationRepository } from "../../repositories/notification.repository"
+import { TemplateService } from "../../services/shared/template.service"
+import { notificationAdapter } from "../../integrations/notification/notification.config"
+import { logger } from "../../utils/logger"
 
 export interface SendNotificationParams {
   userId: string

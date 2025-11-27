@@ -1,12 +1,12 @@
 import { Router } from "express"
-import { CryptoTradingController } from "@/controllers/crypto/crypto-trading.controller"
-import { validation } from "@/middlewares/common/validation.middleware"
-import { authMiddleware } from "@/middlewares/auth/auth.middleware"
+import { CryptoTradingController } from "../controllers/crypto/crypto-trading.controller"
+import { validation } from "../middlewares/common/validation.middleware"
+import { authMiddleware } from "../middlewares/auth/auth.middleware"
 import {
   sellCryptoSchema,
   buyCryptoSchema,
   transactionIdParamSchema,
-} from "@/validators/crypto-trading.validator"
+} from "../validators/crypto-trading.validator"
 
 const router = Router()
 const cryptoTradingController = new CryptoTradingController()

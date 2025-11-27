@@ -1,6 +1,6 @@
-import { RateRepository } from "@/repositories/rate.repository"
-import { getRateProvider } from "@/integrations/rates/rates.config"
-import { logger } from "@/utils/logger"
+import { RateRepository } from "../../repositories/rate.repository"
+import { getRateProvider } from "../../integrations/rates/rates.config"
+import { logger } from "../../utils/logger"
 
 export class RatesService {
   private rateRepo: RateRepository

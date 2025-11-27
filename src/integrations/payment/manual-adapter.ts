@@ -1,5 +1,5 @@
 import type { IPaymentAdapter, PaymentResult } from "./payment-adapter.interface"
-import { logger } from "@/utils/logger"
+import { logger } from "../../utils/logger"
 
 export class ManualPaymentAdapter implements IPaymentAdapter {
   async initializePayment(amount: number, email: string, reference: string, metadata?: any): Promise<PaymentResult> {

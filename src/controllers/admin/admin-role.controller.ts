@@ -1,11 +1,11 @@
 import type { Response } from "express"
-import type { AuthRequest } from "@/middlewares/auth/auth.middleware"
-import { AdminRoleService } from "@/services/admin/admin-role.service"
-import { successResponse } from "@/utils/response-formatter"
-import { asyncHandler } from "@/middlewares/common/error.middleware"
-import { USER_ROLE, type UserRole } from "@/constants/statuses"
-import { createError } from "@/middlewares/common/error.middleware"
-import { ERROR_CODES } from "@/constants/error-codes"
+import type { AuthRequest } from "../../middlewares/auth/auth.middleware"
+import { AdminRoleService } from "../../services/admin/admin-role.service"
+import { successResponse } from "../../utils/response-formatter"
+import { asyncHandler } from "../../middlewares/common/error.middleware"
+import { USER_ROLE, type UserRole } from "../../constants/statuses"
+import { createError } from "../../middlewares/common/error.middleware"
+import { ERROR_CODES } from "../../constants/error-codes"
 
 export class AdminRoleController {
   private adminRoleService: AdminRoleService

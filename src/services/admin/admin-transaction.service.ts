@@ -1,10 +1,10 @@
-import { TransactionRepository } from "@/repositories/transaction.repository"
-import { UserRepository } from "@/repositories/user.repository"
-import { NotificationService } from "@/services/shared/notification.service"
-import { createError } from "@/middlewares/common/error.middleware"
-import { ERROR_CODES, ERROR_MESSAGES } from "@/constants/error-codes"
-import { TRANSACTION_STATUS } from "@/constants/statuses"
-import { logger } from "@/utils/logger"
+import { TransactionRepository } from "../../repositories/transaction.repository"
+import { UserRepository } from "../../repositories/user.repository"
+import { NotificationService } from "../../services/shared/notification.service"
+import { createError } from "../../middlewares/common/error.middleware"
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
+import { TRANSACTION_STATUS } from "../../constants/statuses"
+import { logger } from "../../utils/logger"
 
 export interface ConfirmPaymentDto {
   blockchainTxHash?: string

@@ -1,5 +1,5 @@
 import crypto from "crypto"
-import { appConfig } from "@/config/app.config"
+import { appConfig } from "../config/app.config"
 
 const ALGORITHM = "aes-256-cbc"
 const IV_LENGTH = 16

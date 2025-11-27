@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express"
-import { logger } from "@/utils/logger"
-import { errorResponse } from "@/utils/response-formatter"
-import { ERROR_CODES, ERROR_MESSAGES } from "@/constants/error-codes"
+import { logger } from "../../utils/logger"
+import { errorResponse } from "../../utils/response-formatter"
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
 
 export interface CustomError extends Error {
   statusCode?: number

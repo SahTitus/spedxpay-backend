@@ -1,8 +1,8 @@
 import type { Response, NextFunction } from "express"
 import type { AuthRequest } from "./auth.middleware"
-import { errorResponse } from "@/utils/response-formatter"
-import { ERROR_CODES, ERROR_MESSAGES } from "@/constants/error-codes"
-import { USER_ROLE } from "@/constants/statuses"
+import { errorResponse } from "../../utils/response-formatter"
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
+import { USER_ROLE } from "../../constants/statuses"
 
 export function requireRole(...allowedRoles: string[]) {
   return (req: AuthRequest, res: Response, next: NextFunction): void => {

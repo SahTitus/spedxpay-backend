@@ -1,5 +1,5 @@
 import mongoose, { Schema, type Document } from "mongoose"
-import { GIFT_CARD_TYPES } from "@/constants/currencies"
+import { GIFT_CARD_TYPES } from "../constants/currencies"
 
 export interface IGiftCard extends Document {
   sellerId?: mongoose.Types.ObjectId

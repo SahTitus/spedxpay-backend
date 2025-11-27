@@ -1,5 +1,5 @@
 import { BaseRepository } from "./base/base.repository"
-import { AdminInvitation, type IAdminInvitation } from "@/models/AdminInvitation.model"
+import { AdminInvitation, type IAdminInvitation } from "../models/AdminInvitation.model"
 
 export class AdminInvitationRepository extends BaseRepository<IAdminInvitation> {
   constructor() {

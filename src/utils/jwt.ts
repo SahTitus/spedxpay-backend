@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import type { Secret, SignOptions } from "jsonwebtoken";
-import { appConfig } from "@/config/app.config";
+import { appConfig } from "../config/app.config";
 
 export interface JWTPayload {
   userId: string;

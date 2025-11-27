@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from "express"
-import { verifyToken } from "@/utils/jwt"
-import { errorResponse } from "@/utils/response-formatter"
-import { ERROR_CODES, ERROR_MESSAGES } from "@/constants/error-codes"
-import { logger } from "@/utils/logger"
+import { verifyToken } from "../../utils/jwt"
+import { errorResponse } from "../../utils/response-formatter"
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
+import { logger } from "../../utils/logger"
 
 export interface AuthRequest<P = any> extends Request<P> {
   user?: {

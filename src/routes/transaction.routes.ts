@@ -1,8 +1,8 @@
 import { Router } from "express"
-import { TransactionController } from "@/controllers/transaction/transaction.controller"
-import { validation } from "@/middlewares/common/validation.middleware"
-import { authMiddleware } from "@/middlewares/auth/auth.middleware"
-import { getTransactionsQuerySchema, transactionIdParamSchema } from "@/validators/transaction.validator"
+import { TransactionController } from "../controllers/transaction/transaction.controller"
+import { validation } from "../middlewares/common/validation.middleware"
+import { authMiddleware } from "../middlewares/auth/auth.middleware"
+import { getTransactionsQuerySchema, transactionIdParamSchema } from "../validators/transaction.validator"
 
 const router = Router()
 const transactionController = new TransactionController()

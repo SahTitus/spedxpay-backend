@@ -1,5 +1,5 @@
 import Joi from "joi"
-import { GIFT_CARD_TYPES } from "@/constants/currencies"
+import { GIFT_CARD_TYPES } from "../constants/currencies"
 
 export const sellGiftCardSchema = Joi.object({
   type: Joi.string()

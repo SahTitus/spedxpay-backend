@@ -1,8 +1,8 @@
-import { UserRepository } from "@/repositories/user.repository"
-import { createError } from "@/middlewares/common/error.middleware"
-import { ERROR_CODES, ERROR_MESSAGES } from "@/constants/error-codes"
-import { logger } from "@/utils/logger"
-import { KycRepository } from "@/repositories/kyc.repository"
+import { UserRepository } from "../../repositories/user.repository"
+import { createError } from "../../middlewares/common/error.middleware"
+import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes"
+import { logger } from "../../utils/logger"
+import { KycRepository } from "../../repositories/kyc.repository"
 
 export interface AddPaymentMethodDto {
   type: "momo" | "bank"

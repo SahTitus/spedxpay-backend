@@ -1,7 +1,7 @@
-import { GiftCardTypeRepository } from "@/repositories/gift-card-type.repository"
-import { createError } from "@/middlewares/common/error.middleware"
-import { ERROR_CODES } from "@/constants/error-codes"
-import { logger } from "@/utils/logger"
+import { GiftCardTypeRepository } from "../../repositories/gift-card-type.repository"
+import { createError } from "../../middlewares/common/error.middleware"
+import { ERROR_CODES } from "../../constants/error-codes"
+import { logger } from "../../utils/logger"
 
 export interface CreateGiftCardTypeDto {
   name: string
