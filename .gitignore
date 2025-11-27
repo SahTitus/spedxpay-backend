@@ -44,3 +44,5 @@ todo.*
 todo.md
 md.md
 *.md
+.vercel
+.env*.local

@@ -48,6 +48,14 @@ export function createApp(): Application {
     })
   })
 
+  app.get('/', (req, res) => {
+  res.json({
+    message: 'spedxpay-backend is running!',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
+});
+
   app.use("/api/v1", routes)
 
   // 404 handler
