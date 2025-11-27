@@ -4,7 +4,6 @@
 
 # Default ignores (keep everything else normal)
 node_modules/
-dist/
 .env*
 .git
 .gitignore
