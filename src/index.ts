@@ -1,4 +1,4 @@
-import { createApp } from "./app"
+import { createApp } from "./app/index"
 import { connectDatabase } from "./config/database.config"
 import { appConfig } from "./config/app.config"
 import { logger } from "./utils/logger"
