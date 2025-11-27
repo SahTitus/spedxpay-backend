@@ -1,4 +1,4 @@
-import { createApp } from "./app.js.js";
+import { createApp } from "./app.js";
 import { connectDatabase } from "./config/database.config.js";
 import { appConfig } from "./config/app.config.js";
 import { logger } from "./utils/logger.js";
