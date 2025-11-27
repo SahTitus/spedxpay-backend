@@ -1,25 +1,25 @@
-import { Router } from "express"
-import authRoutes from "./auth.routes"
-import userRoutes from "./user.routes"
+import { Router } from "express";
+import authRoutes from "./auth.routes.js";
+import userRoutes from "./user.routes.js";
 import kycRoutes from "./kyc.routes";
-import cryptoTradingRoutes from "./crypto-trading.routes"
-import giftCardRoutes from "./gift-card.routes"
-import googleVoiceRoutes from "./google-voice.routes"
-import ratesRoutes from "./rates.routes"
-import adminRoutes from "./admin.routes"
-import transactionRoutes from "./transaction.routes"
+import cryptoTradingRoutes from "./crypto-trading.routes.js";
+import giftCardRoutes from "./gift-card.routes.js";
+import googleVoiceRoutes from "./google-voice.routes.js";
+import ratesRoutes from "./rates.routes.js";
+import adminRoutes from "./admin.routes.js";
+import transactionRoutes from "./transaction.routes.js";
 
-const router = Router()
+const router = Router();
 
 // API v1 routes
-router.use("/auth", authRoutes)
-router.use( "/users", userRoutes )
-router.use("/kyc", kycRoutes)
-router.use("/crypto", cryptoTradingRoutes)
-router.use("/gift-cards", giftCardRoutes)
-router.use("/google-voice", googleVoiceRoutes)
-router.use("/rates", ratesRoutes)
-router.use( "/admin", adminRoutes )
-router.use("/transactions", transactionRoutes)
+router.use("/auth", authRoutes);
+router.use("/users", userRoutes);
+router.use("/kyc", kycRoutes);
+router.use("/crypto", cryptoTradingRoutes);
+router.use("/gift-cards", giftCardRoutes);
+router.use("/google-voice", googleVoiceRoutes);
+router.use("/rates", ratesRoutes);
+router.use("/admin", adminRoutes);
+router.use("/transactions", transactionRoutes);
 
-export default router
+export default router;
