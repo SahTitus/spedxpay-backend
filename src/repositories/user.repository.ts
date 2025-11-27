@@ -1,4 +1,4 @@
-import { BaseRepository } from "./base/base.repository";
+import { BaseRepository } from "./base/base.repository.js";
 import { User, type IUser } from "../models/User.model.js";
 
 export class UserRepository extends BaseRepository<IUser> {

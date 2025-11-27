@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { appConfig } from "./app.config";
+import { appConfig } from "./app.config.js";
 import { logger } from "../utils/logger.js";
 
 export async function connectDatabase(): Promise<void> {

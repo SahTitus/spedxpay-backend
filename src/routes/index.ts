@@ -1,7 +1,7 @@
 import { Router } from "express";
 import authRoutes from "./auth.routes.js";
 import userRoutes from "./user.routes.js";
-import kycRoutes from "./kyc.routes";
+import kycRoutes from "./kyc.routes.js";
 import cryptoTradingRoutes from "./crypto-trading.routes.js";
 import giftCardRoutes from "./gift-card.routes.js";
 import googleVoiceRoutes from "./google-voice.routes.js";

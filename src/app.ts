@@ -5,7 +5,7 @@ import compression from "compression";
 import morgan from "morgan";
 import { errorMiddleware } from "./middlewares/common/error.middleware.js";
 import { logger } from "./utils/logger.js";
-import routes from "./routes";
+import routes from "./routes/index.js";
 
 export function createApp(): Application {
   const app = express();

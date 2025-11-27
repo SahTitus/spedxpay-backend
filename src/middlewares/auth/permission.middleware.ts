@@ -1,5 +1,5 @@
 import type { Response, NextFunction } from "express";
-import type { AuthRequest } from "./auth.middleware";
+import type { AuthRequest } from "./auth.middleware.js";
 import { errorResponse } from "../../utils/response-formatter.js";
 import { ERROR_CODES, ERROR_MESSAGES } from "../../constants/error-codes.js";
 import { USER_ROLE } from "../../constants/statuses.js";

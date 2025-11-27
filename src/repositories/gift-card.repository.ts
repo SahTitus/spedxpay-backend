@@ -1,4 +1,4 @@
-import { BaseRepository } from "./base/base.repository";
+import { BaseRepository } from "./base/base.repository.js";
 import { GiftCard, type IGiftCard } from "../models/GiftCard.model.js";
 import { User } from "../models/User.model.js";
 

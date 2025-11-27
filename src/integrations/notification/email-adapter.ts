@@ -5,7 +5,7 @@ import type {
   INotificationAdapter,
   EmailData,
   SMSData,
-} from "./notification-adapter.interface";
+} from "./notification-adapter.interface.js";
 
 export class EmailAdapter implements INotificationAdapter {
   private resend: Resend;

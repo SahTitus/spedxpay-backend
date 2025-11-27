@@ -1,7 +1,7 @@
 import type {
   IStorageAdapter,
   UploadResult,
-} from "./storage-adapter.interface";
+} from "./storage-adapter.interface.js";
 import { logger } from "../../utils/logger.js";
 import fs from "fs";
 import path from "path";

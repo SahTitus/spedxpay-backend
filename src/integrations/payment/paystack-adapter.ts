@@ -1,7 +1,7 @@
 import type {
   IPaymentAdapter,
   PaymentResult,
-} from "./payment-adapter.interface";
+} from './payment-adapter.interface.js';
 import { appConfig } from "../../config/app.config.js";
 import { logger } from "../../utils/logger.js";
 

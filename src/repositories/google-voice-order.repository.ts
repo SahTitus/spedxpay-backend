@@ -1,4 +1,4 @@
-import { BaseRepository } from "./base/base.repository";
+import { BaseRepository } from "./base/base.repository.js";
 import {
   GoogleVoiceOrder,
   type IGoogleVoiceOrder,

@@ -1,4 +1,4 @@
-import { BaseRepository } from "./base/base.repository";
+import { BaseRepository } from "./base/base.repository.js";
 import { Transaction, type ITransaction } from "../models/Transaction.model.js";
 import { GiftCard } from "../models/GiftCard.model.js";
 import { GoogleVoiceOrder } from "../models/GoogleVoiceOrder.model.js";

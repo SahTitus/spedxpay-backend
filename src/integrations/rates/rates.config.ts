@@ -1,5 +1,5 @@
-import { CoinGeckoProvider } from "./coingecko-provider";
-import type { IRateProvider } from "./rate-provider.interface";
+import { CoinGeckoProvider } from "./coingecko-provider.js";
+import type { IRateProvider } from "./rate-provider.interface.js";
 import { appConfig } from "../../config/app.config.js";
 
 export interface RatesConfig {

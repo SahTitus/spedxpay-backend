@@ -1,4 +1,4 @@
-import { BaseRepository } from "./base/base.repository";
+import { BaseRepository } from "./base/base.repository.js";
 import { Kyc, type IKyc } from "../models/Kyc.model.js";
 import { KYC_STATUS } from "../constants/statuses.js";
 import { User } from "../models/User.model.js";

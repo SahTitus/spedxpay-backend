@@ -1,4 +1,4 @@
-import type { IRateProvider, RateData } from "./rate-provider.interface";
+import type { IRateProvider, RateData } from "./rate-provider.interface.js";
 import { CRYPTO_CURRENCIES } from "../../constants/currencies.js";
 import { logger } from "../../utils/logger.js";
 

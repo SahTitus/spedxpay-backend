@@ -1,7 +1,7 @@
 import type {
   IPaymentAdapter,
   PaymentResult,
-} from "./payment-adapter.interface";
+} from "./payment-adapter.interface.js";
 import { logger } from "../../utils/logger.js";
 
 export class ManualPaymentAdapter implements IPaymentAdapter {
