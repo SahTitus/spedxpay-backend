@@ -3,8 +3,8 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "node",
-    "outDir": "dist",
-    "rootDir": "src",
+    "outDir": "./dist",
+    "rootDir": "./",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -21,6 +21,6 @@
     "esm": true,
     "experimentalSpecifierResolution": "node"
   },
-  "include": ["src/**/*"],
+  "include": ["./src/**/*.ts", "./api/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
