@@ -1,6 +1,6 @@
 import type { IStorageAdapter, UploadResult } from "./storage-adapter.interface"
-import { appConfig } from "@/config/app.config"
-import { logger } from "@/utils/logger"
+import { appConfig } from "../../config/app.config"
+import { logger } from "../../utils/logger"
 
 export class CloudinaryAdapter implements IStorageAdapter {
   private cloudName: string

@@ -1,5 +1,5 @@
 import Joi from "joi"
-import { CRYPTO_CURRENCIES } from "@/constants/currencies"
+import { CRYPTO_CURRENCIES } from "../constants/currencies"
 
 export const sellCryptoSchema = Joi.object({
   cryptocurrency: Joi.string()

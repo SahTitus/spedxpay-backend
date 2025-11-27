@@ -1,5 +1,5 @@
 import type { IStorageAdapter, UploadResult } from "./storage-adapter.interface"
-import { logger } from "@/utils/logger"
+import { logger } from "../../utils/logger"
 import fs from "fs"
 import path from "path"
 
