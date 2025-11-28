@@ -21,6 +21,6 @@
     "esm": true,
     "experimentalSpecifierResolution": "node"
   },
-  "include": ["./src/**/*.ts", "./api/**/*.ts", "api/index.js"],
+  "include": ["./src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
