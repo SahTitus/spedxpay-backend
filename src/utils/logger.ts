@@ -8,11 +8,11 @@ const logFormat = winston.format.combine(
   winston.format.json()
 );
 
-export const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || "info",
-  format: logFormat,
-  defaultMeta: { service: "sped_x_pay-backend" },
-  transports: [
+const transports: winston.transport[] = [];
+
+// Only use file transports in local development (not on Vercel)
+if (!process.env.VERCEL) {
+  transports.push(
     new winston.transports.File({
       filename: path.join("logs", "error.log"),
       level: "error",
@@ -23,12 +23,19 @@ export const logger = winston.createLogger({
       filename: path.join("logs", "combined.log"),
       maxsize: 5242880, // 5MB
       maxFiles: 5,
-    }),
-  ],
-});
+    })
+  );
 
+  // Create logs directory if it doesn't exist
+  const logsDir = path.join(process.cwd(), "logs");
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir, { recursive: true });
+  }
+}
+
+// Always add console transport
 if (process.env.NODE_ENV !== "production") {
-  logger.add(
+  transports.push(
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
@@ -36,10 +43,17 @@ if (process.env.NODE_ENV !== "production") {
       ),
     })
   );
+} else {
+  transports.push(
+    new winston.transports.Console({
+      format: logFormat,
+    })
+  );
 }
 
-// Create logs directory if it doesn't exist
-const logsDir = path.join(process.cwd(), "logs");
-if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir, { recursive: true });
-}
+export const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || "info",
+  format: logFormat,
+  defaultMeta: { service: "sped_x_pay-backend" },
+  transports,
+});
