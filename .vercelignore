@@ -1,6 +1,4 @@
 # .vercelignore
-# Keep build.mjs so Vercel can run the build step
-!build.mjs
 
 # Default ignores (keep everything else normal)
 node_modules/
