@@ -32,7 +32,7 @@ export interface ITransaction extends Document {
   reviewedAt?: Date;
   completedAt?: Date;
   expiresAt?: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>
   createdAt: Date;
   updatedAt: Date;
 }

@@ -6,10 +6,14 @@
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec tsx src/index.ts",
     "build": "tsc",
+    "lint": "eslint . --ext .ts",
     "start": "node dist/index.js",
-    "script:cleanup-notifications": "tsx dist/scripts/cleanup-notifications.ts",
-    "script:cleanup-google-voice": "tsx dist/scripts/cleanup-google-voice.ts",
-    "script:update-rates": "tsx dist/scripts/update-rates.ts"
+    "script:cleanup-notifications": "node dist/scripts/cleanup-notifications.js",
+    "script:cleanup-notifications:dev": "tsx src/scripts/cleanup-notifications.ts",
+    "script:cleanup-google-voice": "node dist/scripts/cleanup-google-voice.js",
+    "script:cleanup-google-voice:dev": "tsx src/scripts/cleanup-google-voice.ts",
+    "script:update-rates": "node dist/scripts/update-rates.js",
+    "script:update-rates:dev": "tsx src/scripts/update-rates.ts"
   },
   "engines": {
     "node": "20.x"
@@ -36,6 +40,7 @@
     "winston": "^3.18.3"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "@types/bcryptjs": "^3.0.0",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
@@ -43,14 +48,15 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.10.1",
-    "@types/react": "^19.2.2",
     "esbuild": "^0.27.0",
     "eslint": "^9.37.0",
+    "globals": "^17.4.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.20.5",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.0"
   }
 }

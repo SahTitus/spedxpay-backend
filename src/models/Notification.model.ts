@@ -6,7 +6,7 @@ export interface INotification extends Document {
   title: string
   message: string
   channels: string[]
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   read: boolean
   sentAt: Date
   expiresAt: Date

@@ -3,7 +3,7 @@ export interface RateData {
   buyRate: number
   sellRate: number
   source: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface IRateProvider {

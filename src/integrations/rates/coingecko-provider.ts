@@ -20,8 +20,6 @@ export class CoinGeckoProvider implements IRateProvider {
         [CRYPTO_CURRENCIES.XRP]: "ripple",
       };
 
-      console.log("🪙🪙🪙CoinGeckoProvider");
-
       const ids = Object.values(coinIds).join(",");
       const url = `${this.baseUrl}/simple/price?ids=${ids}&vs_currencies=usd`;
 

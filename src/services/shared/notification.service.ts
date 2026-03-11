@@ -2,6 +2,7 @@ import { NotificationRepository } from "../../repositories/notification.reposito
 import { TemplateService } from "../../services/shared/template.service.js";
 import { notificationAdapter } from "../../integrations/notification/notification.config.js";
 import { logger } from "../../utils/logger.js";
+import mongoose from "mongoose";
 
 export interface SendNotificationParams {
   userId: string;
@@ -9,9 +10,9 @@ export interface SendNotificationParams {
   title: string;
   message: string;
   channels?: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>
   templateType?: string;
-  templateData?: Record<string, any>;
+  templateData?: Record<string, unknown>;
   userEmail?: string;
   userName?: string;
 }
@@ -45,17 +46,17 @@ export class NotificationService {
       expiresAt.setDate(expiresAt.getDate() + 30);
 
       await this.notificationRepo.create({
-        userId,
+        userId: new mongoose.Types.ObjectId(userId),
         type,
         title,
         message,
         channels,
         metadata,
         expiresAt,
-      } as any);
+      });
 
       if (channels.includes("email") && userEmail) {
-        const res = await this.sendEmail(
+         await this.sendEmail(
           userEmail,
           userName,
           templateType,
@@ -65,7 +66,7 @@ export class NotificationService {
         );
       }
 
-      if (channels.includes("sms") && metadata?.phone) {
+      if (channels.includes("sms") && metadata?.phone && typeof metadata.phone === "string") {
         await this.sendSMS(
           metadata.phone,
           userName,
@@ -84,7 +85,7 @@ export class NotificationService {
     to: string,
     userName: string | undefined,
     templateType: string | undefined,
-    templateData: Record<string, any> | undefined,
+    templateData: Record<string, unknown> | undefined,
     fallbackTitle: string,
     fallbackMessage: string
   ): Promise<void> {
@@ -104,7 +105,7 @@ export class NotificationService {
         }
       }
 
-      const res = await notificationAdapter.sendEmail({
+       await notificationAdapter.sendEmail({
         to,
         subject,
         html,
@@ -120,7 +121,7 @@ export class NotificationService {
     to: string,
     userName: string | undefined,
     templateType: string | undefined,
-    templateData: Record<string, any> | undefined,
+    templateData: Record<string, unknown> | undefined,
     fallbackMessage: string
   ): Promise<void> {
     try {

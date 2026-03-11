@@ -7,7 +7,7 @@ export interface IRate extends Document {
   sellRate: number;
   source: string;
   lastUpdated: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>
   createdAt: Date;
 }
 

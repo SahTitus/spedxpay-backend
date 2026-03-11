@@ -16,7 +16,7 @@ export class EmailAdapter implements INotificationAdapter {
 
   async sendEmail(data: EmailData): Promise<boolean> {
     try {
-      const result = await this.resend.emails.send({
+      await this.resend.emails.send({
         from:
           data.from ||
           `${appConfig.email.fromName} <${appConfig.email.fromEmail}>`,

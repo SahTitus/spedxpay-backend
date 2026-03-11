@@ -1,5 +1,6 @@
 import cron from "node-cron";
 import type { ScheduledTask } from "node-cron";
+import { existsSync } from "fs";
 import { logger } from "../../utils/logger.js";
 import { exec } from "child_process";
 import { promisify } from "util";
@@ -34,9 +35,13 @@ export class SchedulerService {
     const job = cron.schedule("*/1 * * * *", async () => {
       try {
         logger.info("[CRON] Starting rates update job...");
-        const { stdout, stderr } = await execAsync(
-          "npm run script:update-rates"
-        );
+
+        const distScript = "dist/scripts/update-rates.js";
+        const command = existsSync(distScript)
+          ? `node ${distScript}`
+          : "tsx src/scripts/update-rates.ts";
+
+        const { stdout, stderr } = await execAsync(command);
 
         if (stderr) {
           logger.error("[CRON] Rates update stderr:", stderr);
@@ -60,9 +65,13 @@ export class SchedulerService {
     const job = cron.schedule("*/5 * * * *", async () => {
       try {
         logger.info("[CRON] Starting Google Voice cleanup job...");
-        const { stdout, stderr } = await execAsync(
-          "npm run script:cleanup-google-voice"
-        );
+
+        const distScript = "dist/scripts/cleanup-google-voice.js";
+        const command = existsSync(distScript)
+          ? `node ${distScript}`
+          : "tsx src/scripts/cleanup-google-voice.ts";
+
+        const { stdout, stderr } = await execAsync(command);
 
         if (stderr && !stderr.includes("Warning")) {
           logger.error("[CRON] Google Voice cleanup stderr:", stderr);
@@ -87,9 +96,12 @@ export class SchedulerService {
       try {
         logger.info("[CRON] Starting notification cleanup job...");
 
-        const { stdout, stderr } = await execAsync(
-          "npm run script:cleanup-notifications"
-        );
+        const distScript = "dist/scripts/cleanup-notifications.js";
+        const command = existsSync(distScript)
+          ? `node ${distScript}`
+          : "tsx src/scripts/cleanup-notifications.ts";
+
+        const { stdout, stderr } = await execAsync(command);
 
         if (stderr) {
           logger.error("[CRON] Notification cleanup stderr:", stderr);

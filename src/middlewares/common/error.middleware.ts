@@ -13,7 +13,7 @@ export function errorMiddleware(
   error: CustomError,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void {
   logger.error("Error occurred:", {
     error: error.message,
@@ -62,7 +62,7 @@ export function createError(
   message: string,
   statusCode: number,
   code: string,
-  details?: any
+  details?: any,
 ): CustomError {
   const error = new Error(message) as CustomError;
   error.statusCode = statusCode;
@@ -71,8 +71,10 @@ export function createError(
   return error;
 }
 
-export function asyncHandler(fn: Function) {
+export function asyncHandler<Req extends Request = Request>(
+  fn: (req: Req, res: Response, next: NextFunction) => Promise<unknown>,
+) {
   return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
+    Promise.resolve(fn(req as Req, res, next)).catch(next);
   };
 }

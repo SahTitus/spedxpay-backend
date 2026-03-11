@@ -2,7 +2,7 @@ export interface UploadResult {
   success: boolean
   url: string
   key: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface IStorageAdapter {

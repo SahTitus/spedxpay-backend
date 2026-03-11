@@ -3,7 +3,7 @@ export interface PaymentResult {
   transactionId?: string
   reference?: string
   message: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface IPaymentAdapter {

@@ -26,7 +26,7 @@ export interface IGoogleVoiceOrder extends Document {
   reviewedBy?: mongoose.Types.ObjectId;
   reviewedAt?: Date;
   completedAt?: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>
   createdAt: Date;
   updatedAt: DateExpressionOperator;
   getDecryptedPasswords(): Array<{ accountEmail: string; password: string }>;

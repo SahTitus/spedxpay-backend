@@ -354,7 +354,6 @@ export class GiftCardService {
         );
       }
 
-      console.log(giftCard.sellerId?.toString(), userId);
       if (giftCard.sellerId?.toString() !== userId) {
         throw createError(
           ERROR_MESSAGES[ERROR_CODES.FORBIDDEN],
